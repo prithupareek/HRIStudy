@@ -2,6 +2,7 @@
 import pygame as pg
 from pygame import mouse
 from nonogram import Nonogram
+from nonogram import PLAYING, SOLVED, TIMEOUT
 
 class Game(object):
     def __init__(self) -> None:
@@ -34,6 +35,8 @@ class Game(object):
 
     def update(self):
         self._nonogram.update(keys=self._keys)
+        if self._nonogram.gameMode == SOLVED:
+            self._running = False
 
     def mainLoop(self) -> None:
         # main loop

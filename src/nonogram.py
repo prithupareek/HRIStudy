@@ -6,6 +6,10 @@ EMPTY = 0
 SELCTED = 1
 CROSSED = 2
 
+PLAYING = 0
+SOLVED = 1
+TIMEOUT = 2
+
 class Nonogram(object):
     def __init__(self, screen, puzzleName) -> None:
         self.rows = 10
@@ -22,6 +26,8 @@ class Nonogram(object):
 
         self.gameState = [[0 for col in range(self.cols)] for row in range(self.rows)]
         # self.prettyPrintGameState()
+
+        self.gameMode = PLAYING
 
         self.puzzle, self.solutionState = self.loadPuzzle(puzzleName)
 
@@ -180,4 +186,4 @@ class Nonogram(object):
 
     def update(self, keys):
         if self.gameState == self.solutionState:
-            print("Game Over")
+            self.gameMode = SOLVED
