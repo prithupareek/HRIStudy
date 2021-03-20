@@ -8,7 +8,7 @@ SELCTED = 1
 CROSSED = 2
 
 class Nonogram(object):
-    def __init__(self, screen) -> None:
+    def __init__(self, screen, puzzleName) -> None:
         self.rows = 10
         self.cols = 10
 
@@ -23,6 +23,34 @@ class Nonogram(object):
 
         self.gameState = [[0 for col in range(self.cols)] for row in range(self.rows)]
         # self.prettyPrintGameState()
+
+        self.puzzle = self.loadPuzzle(puzzleName)
+
+    def loadPuzzle(self, puzzleName):
+        puzzleFilePath = "puzzles/" + puzzleName + ".txt"
+        puzzleFile = open(puzzleFilePath, "r")
+        
+        puzzleData = []
+
+        # Loop through the file line by line
+        for line in puzzleFile:
+            # ignore comments
+            if line.startswith('#'):
+                continue
+
+            # for puzzle data
+            if line.startswith('('):
+                # loop through each cell
+                for cell in line.split(", "):
+                    # remove extra chars around
+                    striped = cell.strip()
+                    converted = eval(striped)
+                    puzzleData += [converted]
+
+        return puzzleData
+
+                    
+
 
     def prettyPrintGameState(self):
         for row in range(self.rows):
@@ -112,6 +140,29 @@ class Nonogram(object):
                     pg.draw.rect(self._screen, self._gridColor, pg.Rect(x + 5, y + 5, self._cellDims - 10, self._cellDims - 10)) 
                 elif self.gameState[row][col] == CROSSED:                    
                     self._screen.blit(self._crossImg, (x + 5,y + 5))
+
+        font = pg.font.SysFont('Helvetica', 30)
+
+        # draw the numbers
+        for i in range(len(self.puzzle)):
+            for j in range(len(self.puzzle[0])):
+                # if not zero
+                if self.puzzle[i][j] != 0:
+                    textSurf = font.render(str(self.puzzle[i][j]), False, (0, 0, 0))
+                    textRect = textSurf.get_rect()
+                    # if on top row
+                    if i < len(self.puzzle)/2:
+                        # text surface object
+                        x = outerX + i * self._cellDims + textRect.height/2
+                        y = outerY + j * self._cellDims - self._cellDims*(3) + textRect.width/2
+
+                    # if on side
+                    else:
+                        y = outerY + (i % self.rows) * self._cellDims + textRect.height/2
+                        x = outerX + j * self._cellDims - self._cellDims*(3) + textRect.width/2
+                    
+                    # draw on the screen
+                    self._screen.blit(textSurf, (x, y))
                     
 
 
@@ -123,6 +174,7 @@ class Game(object):
         # initialize the pygame module
         pg.init()
         pg.display.set_caption("HRI Study")
+        pg.font.init()
 
         # create a fullscreen window for pygame to run
         self._screen = pg.display.set_mode((0, 0), pg.FULLSCREEN)
@@ -132,7 +184,7 @@ class Game(object):
 
         self._keys = pg.key.get_pressed()
 
-        self._nonogram = Nonogram(self._screen)
+        self._nonogram = Nonogram(self._screen, "testPuzzle")
 
     def eventLoop(self):
         for event in pg.event.get():
