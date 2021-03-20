@@ -24,13 +24,18 @@ class Nonogram(object):
         self.gameState = [[0 for col in range(self.cols)] for row in range(self.rows)]
         # self.prettyPrintGameState()
 
-        self.puzzle = self.loadPuzzle(puzzleName)
+        self.puzzle, self.solutionState = self.loadPuzzle(puzzleName)
 
     def loadPuzzle(self, puzzleName):
         puzzleFilePath = "puzzles/" + puzzleName + ".txt"
         puzzleFile = open(puzzleFilePath, "r")
         
         puzzleData = []
+        solution = [[0 for col in range(self.cols)] for row in range(self.rows)]
+
+        # keep track of row cols for solution
+        row = 0
+        col = 0 
 
         # Loop through the file line by line
         for line in puzzleFile:
@@ -47,9 +52,20 @@ class Nonogram(object):
                     converted = eval(striped)
                     puzzleData += [converted]
 
-        return puzzleData
+            # for solution state
+            if line.startswith('|'):
+                truncated = line[2:].strip()
+                
+                for num in truncated.split(" "):
+                    num = num.strip()
+                    # print(num)
+                    solution[row][col] = eval(num)
+                    col += 1
+                
+                col = 0
+                row += 1
 
-                    
+        return puzzleData, solution
 
 
     def prettyPrintGameState(self):
@@ -96,7 +112,6 @@ class Nonogram(object):
             self.gameState[row][col] = (self.gameState[row][col] + 1) % 3
 
             # self.prettyPrintGameState()
-
 
 
     def draw(self):
@@ -167,7 +182,8 @@ class Nonogram(object):
 
 
     def update(self, keys):
-        pass
+        if self.gameState == self.solutionState:
+            print("Game Over")
 
 class Game(object):
     def __init__(self) -> None:
