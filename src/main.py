@@ -42,13 +42,22 @@ class Game(object):
                     self._running = PLAYING
 
     def draw(self):
-        self._screen.fill(pg.Color("white"))
-        self._nonogram.draw()
+        if self._running == INTRO:
+            self.drawIntro()
+        elif self._running == ENDSCREEN:
+            self.drawEndscreen()
+        else:
+            self._screen.fill(pg.Color("white"))
+            self._nonogram.draw()
 
     def drawIntro(self):
         self._screen.fill(pg.Color("blue"))
+        font = pg.font.SysFont('Helvetica', 30)
+        textSurf = font.render("Click to Continue", False, (0, 0, 0))
+        info = pg.display.Info()
+        self._screen.blit(textSurf, (info.current_w/2, info.current_h/2))
     
-    def drawEnd(self):
+    def drawEndscreen(self):
         self._screen.fill(pg.Color("red"))
 
     def update(self):
@@ -62,18 +71,11 @@ class Game(object):
 
     def mainLoop(self) -> None:
         # main loop
-        while self._running == INTRO:
+        while self._running != END:
             self.eventLoop()
-            self.drawIntro()
-            pg.display.update()
-        while self._running == PLAYING:
-            self.eventLoop()
-            self.update()
+            if self._running == PLAYING:
+                self.update()
             self.draw()
-            pg.display.update()
-        while self._running == ENDSCREEN:
-            self.eventLoop()
-            self.drawEnd()
             pg.display.update()
 
 # define a main function
