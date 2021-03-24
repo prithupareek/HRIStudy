@@ -3,7 +3,7 @@ import pygame as pg
 
 # some constants
 EMPTY = 0
-SELCTED = 1
+SELECTED = 1
 CROSSED = 2
 
 PLAYING = 0
@@ -156,7 +156,7 @@ class Nonogram(object):
                 x = outerX + col * self._cellDims
                 y = outerY + row * self._cellDims
 
-                if self.gameState[row][col] == SELCTED:
+                if self.gameState[row][col] == SELECTED:
                     pg.draw.rect(self._screen, self._gridColor, pg.Rect(x + 5, y + 5, self._cellDims - 10, self._cellDims - 10)) 
                 elif self.gameState[row][col] == CROSSED:                    
                     self._screen.blit(self._crossImg, (x + 5,y + 5))
@@ -184,6 +184,15 @@ class Nonogram(object):
                     # draw on the screen
                     self._screen.blit(textSurf, (x, y))
 
+    def checkWin(self):
+        for row in range(self.rows):
+            for col in range(self.cols):
+                if self.solutionState[row][col] == SELECTED and self.gameState[row][col] != SELECTED:
+                    return False
+                elif self.solutionState[row][col] == CROSSED and self.gameState[row][col] == SELECTED:
+                    return False
+        return True
+
     def update(self, keys):
-        if self.gameState == self.solutionState:
+        if self.checkWin():
             self.gameMode = SOLVED
