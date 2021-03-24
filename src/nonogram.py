@@ -54,7 +54,7 @@ class Nonogram(object):
                 for cell in line.split(", "):
                     # remove extra chars around
                     striped = cell.strip()
-                    converted = eval(striped)
+                    converted = int(striped)
                     puzzleData += [converted]
 
             # for solution state
