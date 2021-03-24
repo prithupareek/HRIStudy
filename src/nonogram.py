@@ -64,7 +64,7 @@ class Nonogram(object):
                 for num in truncated.split(" "):
                     num = num.strip()
                     # print(num)
-                    solution[row][col] = eval(num)
+                    solution[row][col] = int(num)
                     col += 1
                 
                 col = 0
