@@ -49,7 +49,7 @@ def generateAudioFile(text, filename):
     return wav_path
 
 def main():
-    print(generateAudioFile("Hello, my name is Podi", "test"))
+    print(generateAudioFile("Hello, my name is Misty", "test"))
 
 
 if __name__ == "__main__":

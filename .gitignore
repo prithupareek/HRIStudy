@@ -2,10 +2,6 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
-# ignore audio folder
-audio/
-
 # vscode
 .vscode/
 
