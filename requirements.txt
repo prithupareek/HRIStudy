@@ -1,4 +1,3 @@
 pygame==2.0.1
-mistyPy
 requests
 websocket-client==0.52.0
