@@ -38,6 +38,7 @@ import json
 import threading
 import time
 import websocket
+import base64
 
 try:
     import thread
