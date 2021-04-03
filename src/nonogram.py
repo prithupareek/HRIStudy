@@ -11,7 +11,7 @@ SOLVED = 1
 TIMEOUT = 2
 
 class Nonogram(object):
-    def __init__(self, screen, puzzleName, misty) -> None:
+    def __init__(self, screen, puzzleName) -> None:
         self.rows = 10
         self.cols = 10
 
@@ -28,7 +28,6 @@ class Nonogram(object):
         # self.prettyPrintGameState()
 
         self.gameMode = PLAYING
-        self.misty = misty
         self.puzzle, self.solutionState = self.loadPuzzle(puzzleName)
 
     def loadPuzzle(self, puzzleName):
@@ -194,7 +193,5 @@ class Nonogram(object):
         return True
 
     def update(self, keys):
-        if self.adviceNeeded():
-            self.misty.giveAdvice(self)
         if self.checkWin():
             self.gameMode = SOLVED

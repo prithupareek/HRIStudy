@@ -3,7 +3,13 @@ import pygame as pg
 from pygame import mouse
 from nonogram import Nonogram
 from nonogram import PLAYING, SOLVED, TIMEOUT
-import advice
+
+# for the command line args
+import sys
+import getopt
+
+# for saving participant data
+import csv
 
 # Constants for Trial State
 INTRO = 0
@@ -12,7 +18,7 @@ ENDSCREEN = 2
 END = 3
 
 class Game(object):
-    def __init__(self) -> None:
+    def __init__(self, pID, condition) -> None:
         # initialize the pygame module
         pg.init()
         pg.display.set_caption("HRI Study")
@@ -30,10 +36,10 @@ class Game(object):
         self.puzzles = ["testPuzzle", "testPuzzle"]
         self.puzzleIndex = 0
 
-        # Create Misty
-        self.misty = Advice("192.168.2.216")
+        self._nonogram = Nonogram(self._screen, self.puzzles[self.puzzleIndex])
 
-        self._nonogram = Nonogram(self._screen, self.puzzles[self.puzzleIndex], self.misty)
+        self._participantID = pID
+        self._condition = condition
 
     def eventLoop(self):
         for event in pg.event.get():
@@ -83,10 +89,46 @@ class Game(object):
             self.draw()
             pg.display.update()
 
+        # do the csv stuff here
+    
+    def saveData(self):
+        # open the data csv
+        
+
+
+def readArgs():
+    pID = None
+    condition = None
+
+    argv = sys.argv[1:]
+
+    try:
+        opts, args = getopt.getopt(argv, "p:c:")
+      
+    except:
+        print("Error: Must specify participant ID and puzzle condition")
+        sys.exit()
+  
+    for opt, arg in opts:
+        if opt in ['-p']:
+            pID = arg
+        elif opt in ['-c']:
+            condition = arg
+
+    if len(argv) < 2 or pID == None or condition == None:
+        print("Error: Must specify participant ID and puzzle condition")
+        sys.exit()
+
+    return pID, condition
+
 # define a main function
 def main():
-     game = Game()
-     game.mainLoop()
+
+    pID, condition = readArgs()
+
+    # TODO Comment back in before final commit
+    game = Game(pID, condition)
+    game.mainLoop()
      
 # run the main function only if this module is executed as the main script
 # (if you import this as a module then nothing is executed)
