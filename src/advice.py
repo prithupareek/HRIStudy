@@ -1,8 +1,10 @@
 from mistyPy import Robot
 import random
+from nonogram import EMPTY, SELECTED, CROSSED
 
 # Advice numbers
 NUMBER_EQ_GRIDSIZE = 0
+
 OVERLAPPING = 1
 NUM_SEP_BY_1 = 2
 UNREACHABLE = 3
@@ -12,6 +14,11 @@ MERGE_AND_SPLIT = 6
 DISTINGUISH_COMPLETE_GROUPS = 7
 CONTRADICTION = 8
 LEN_ADVICE = 9
+
+from mistyPy import Robot
+import time
+import nonogram
+import random
 
 class Advice():
     def __init__(self, ip):
@@ -67,15 +74,62 @@ class Advice():
         print(adviceList)
         return random.choice(adviceList)
 
-    # TODO: Check if gridsize is applicable
+
+    # Check if gridsize is applicable
     def check_num_eq_gridsize(self, nonogram):
-        length = len(nonogram.gameState)
-        for i in range(length):
-            pass
+        # TODO: Test
+        length = nonogram.rows
+        solution = nonogram.solutionState
+
+        # check the rows
+        for row in range(length):
+            if solution[row].count(SELECTED) == length:
+                if nonogram.gameState[row].count(SELECTED) != length:
+                    return True
+            if solution[row].count(SELECTED) == 0:
+                if nonogram.gameState[row].count(SELECTED) != 0:
+                    return True
+
+        # Check the cols
+        for puzzle in nonogram.puzzle[:length]:
+            if puzzle[2] != length:
+                continue
+            col = puzzle[2]
+            for i in range(length):
+                if nonogram.gameState[i][col] != SELECTED:
+                    return True
+        return False
+
     
-    # TODO: Check if overlapping technique is applicable
+    # Check if overlapping technique is applicable
     def check_overlapping(self, nonogram):
-        pass
+        # TODO: Test
+        # iterate through each row and check if the puzzle is greater than half
+        # of the length of the row:
+        #   If it is, then check of the middle elements in the list is filled
+        for row in range(nonogram.rows):
+            puzzle = nonogram.puzzle[nonogram.rows + row]:
+            if puzzle[1] == 0:
+                if puzzle[2] > nonogram.rows / 2:
+                    gap = nonogram.rows - puzzle[2]
+                    for j in range(gap, puzzle[2]):
+                        if nonogram.gameState[row][j] != 1:
+                            return True
+
+        # check columns
+        for col in range(nonogram.cols):
+            puzzle = nonogram.puzzle[col]
+            if puzzle[1] == 0 and puzzle[2] > nonogram.cols / 2:
+                gap = nonogram.cols - puzzle[2]
+                for row in range(gap, puzzle[2]):
+                    if nonogram[row][col] != 1:
+                        return True
+
+        
+        return False
+
+
+
 
     # TODO: Check if separated by 1 is appicable
     def check_sep_by_1(self, nonogram):
@@ -107,6 +161,7 @@ class Advice():
 
     # return list of advice that can be given given game state
     def list_of_advice(self, nonogram):
+
         # check each advice and append it to the return list
         advice = list()
         for adv in range(LEN_ADVICE):
