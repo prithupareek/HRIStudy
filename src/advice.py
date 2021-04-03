@@ -133,9 +133,26 @@ class Advice():
     def check_still_space(self, nonogram):
         pass
 
-    # TODO: Check if make complete is applicable
+    # Check if make complete is applicable
     def check_make_complete(self, nonogram):
-        pass
+        # TODO: Test
+        # Check rows to see if empty between two selected in row
+        for r in range(nonogram.rows):
+            row = nonogram.gameState[r]
+            if SELECTED in row:
+                i1 = row.index(SELECTED)
+                i2 = nonogram.rows - row[::-1].index(SELECTED) - 1
+                if EMPTY in row[i1:i2]:
+                    return True
+        # Check cols to see if empty between two selected
+        for c in range(nonogram.cols):
+            col = [nonogram.gameState[r][c] for r in range(nonogram.rows)]
+            if SELECTED in col:
+                i1 = col.index(SELECTED)
+                i2 = nonogram.cols - col[::-1].index(SELECTED) - 1
+                if EMPTY in col[i1:i2]:
+                    return True
+        return False
 
     # TODO: Check if merge split is applicable
     def check_merge_split(self, nonogram):
