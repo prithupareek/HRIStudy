@@ -125,9 +125,32 @@ class Advice():
     def check_sep_by_1(self, nonogram):
         pass
 
-    # TODO: Check if unreachable is applicable
+    # Check if unreachable is applicable
     def check_unreachable(self, nonogram):
-        pass
+        # TODO: Test
+        # Check row to see if empty on either side of selected
+        for r in range(nonogram.rows):
+            row = nonogram.gameState[r]
+            solRow = nonogram.solutionState[r]
+            for c in range(nonogram.cols):
+                if solRow[c] == SELECTED:
+                    if row[c] != SELECTED:
+                        break
+                    if row[c] == SELECTED:
+                        if EMPTY in row[:c] and EMPTY in row[c+1:]:
+                            return True
+        # Check col to see if empty on either side of selected
+        for c in range(nonogram.cols):
+            col = [nonogram.gameState[r][c] for r in range(nonograms.rows)]
+            solCol = [nonogram.solutionState[r][c] for r in range(nonograms.cols)]
+            for r in range(nonogram.rows):
+                if solCol[r] == SELECTED:
+                    if col[r] != SELECTED:
+                        break
+                    if col[r] == SELECTED:
+                        if EMPTY in col[:r] and EMPTY in col[r+1:]:
+                            return True
+        return False
 
     # TODO: Check if still space is applicable
     def check_still_space(self, nonogram):
