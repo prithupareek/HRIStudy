@@ -1,5 +1,5 @@
 from mistyPy import Robot
-import time
+import random
 
 # Advice numbers
 NUMBER_EQ_GRIDSIZE = 0
@@ -15,7 +15,7 @@ LEN_ADVICE = 9
 
 class Advice():
     def __init__(self, ip):
-        # self.misty = Robot(ip) TODO: uncomment
+        # self.misty = Robot(ip) TODO: uncomment later
         # TODO Create map from advice numbers to audio file names
         self.adviceAudioMap = {
                             NUMBER_EQ_GRIDSIZE: "",
@@ -53,16 +53,19 @@ class Advice():
         
     def giveAdvice(self, nonogram):
         bestAdvice = self.getBestAdvice(nonogram)
+        print(bestAdvice)
         self.usedAdvice[bestAdvice] = True
         # TODO: Look at board and back - Maybe threading?
-        self.misty.playAudio(self.adviceAudioMap[bestAdvice])
+        # self.misty.playAudio(self.adviceAudioMap[bestAdvice]) TODO: uncomment later
     
-    # TODO: Decide best advice
+    # Decide randomly from applicable/unused advice
     def getBestAdvice(self, nonogram):
         adviceList = self.list_of_advice(nonogram)
         if adviceList == []:
-            pass # TODO: pick one that hasn't been used
-        return NUMBER_EQ_GRIDSIZE #TODO: Fix this
+            # If none are applicable, get all of the unused advices
+            adviceList = [advice for advice in self.usedAdvice if not self.usedAdvice[advice]]
+        print(adviceList)
+        return random.choice(adviceList)
 
     # TODO: Check if gridsize is applicable
     def check_num_eq_gridsize(self, nonogram):
