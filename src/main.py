@@ -30,7 +30,7 @@ class Game(object):
         self.puzzles = ["testPuzzle", "testPuzzle"]
         self.puzzleIndex = 0
 
-        # Create Misty
+        # Create Misty object
         self.advice = Advice("192.168.2.216")
 
         self._nonogram = Nonogram(self._screen, self.puzzles[self.puzzleIndex], self.advice)
