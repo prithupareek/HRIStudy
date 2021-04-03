@@ -51,16 +51,17 @@ class Advice():
                             CONTRADICTION: self.check_contradiction
                         }
         
+
     def giveAdvice(self, nonogram):
         bestAdvice = self.getBestAdvice(nonogram)
         self.usedAdvice[bestAdvice] = True
-        # TODO: Look at board and back - Maybe threading?
+        # TODO: Look at board and back - Maybe threading
         self.misty.playAudio(self.adviceAudioMap[bestAdvice])
     
     # TODO: Decide best advice
     def getBestAdvice(self, nonogram):
         adviceList = self.list_of_advice(nonogram)
-        if adviceList == []:
+        if adviceList == []: 
             pass # TODO: pick one that hasn't been used
         return NUMBER_EQ_GRIDSIZE #TODO: Fix this
 
@@ -76,7 +77,14 @@ class Advice():
 
     # TODO: Check if separated by 1 is appicable
     def check_sep_by_1(self, nonogram):
-        pass
+        for i in nonogram.puzzle:
+            if sum(nonogram.puzzle[i]) + len([a for a in nonogram.puzzle if a != 0]) - 1 == nonogram.rows:
+                if i < nonogram.cols:
+                    if EMPTY in [nonogram.gameState[r][i] for r in range(nonogram.row)]:
+                        return true
+                else:
+                    row = i - nonogram.cols
+                    if EMPTY in nonogram.gameState[row]
 
     # TODO: Check if unreachable is applicable
     def check_unreachable(self, nonogram):
