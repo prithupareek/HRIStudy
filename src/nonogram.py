@@ -1,5 +1,6 @@
 # import the pygame module, so you can use it
 import pygame as pg
+import time
 
 # some constants
 EMPTY = 0
@@ -30,6 +31,13 @@ class Nonogram(object):
         self.gameMode = PLAYING
         self.advice = advice
         self.puzzle, self.solutionState = self.loadPuzzle(puzzleName)
+
+        # Variables for determining advice
+        self.adviceCounts = 0
+        self.lastClickTime = None
+        self.count0 = False
+        self.countThird = False
+        self.countTwoThirds = False
 
     def loadPuzzle(self, puzzleName):
         puzzleFilePath = "puzzles/" + puzzleName + ".txt"
@@ -115,7 +123,7 @@ class Nonogram(object):
         if (row, col) != (-1, -1):
             # modify the game state appropriately
             self.gameState[row][col] = (self.gameState[row][col] + 1) % 3
-
+            self.lastClickTime = time.time()
             # self.prettyPrintGameState()
 
 
@@ -193,8 +201,40 @@ class Nonogram(object):
                     return False
         return True
 
+    # Gets a count of the number of placed cells
+    def getPlacedCount(self):
+        count = 0
+        for row in range(self.rows):
+            for col in range(self.cols):
+                if self.gameState[row][col] != EMPTY:
+                    count += 1
+        return count
+
+    # Decide when to give advice
     def adviceNeeded(self):
-        # TODO: Decide when to give advice
+        if self.adviceCounts >= 3:
+            return False
+        count = self.getPlacedCount()
+        # If participant just started
+        if count == 0 and not self.count0:
+            self.count0 = True
+            self.adviceCounts += 1
+            return True
+        # If participant place 1/3 of blocks
+        if count == int(self.rows*self.cols/3) and not self.countThird:
+            self.countThird = True
+            self.adviceCounts += 1
+            return True
+        # If participant place 2/3 of blocks
+        if count == int(2/3*self.rows*self.cols) and not self.countTwoThirds:
+            self.countTwoThirds = True
+            self.adviceCounts += 1
+            return True
+        # Otherwise, if has been 45 sec since last click
+        if self.lastClickTime is not None and time.time() - self.lastClickTime > 45:
+            self.lastClickTime = None
+            self.adviceCounts += 1
+            return True
         return False
 
     def update(self, keys):
