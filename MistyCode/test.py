@@ -1,8 +1,7 @@
 from mistyPy import Robot
 import time
 
-# # TODO: Replace with your IP
-misty = Robot("192.168.137.159") # This is the IP of my misty. Replace with your IP
+misty = Robot("192.168.137.159")
 misty.changeLED(0, 255, 255)
 # misty.moveHeadPosition(0, 0, 0, 100) # center the head
 # misty.moveArmsDegrees(0, 0, 100, 100)

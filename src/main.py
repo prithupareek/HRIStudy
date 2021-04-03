@@ -28,7 +28,11 @@ class Game(object):
         # Multiple puzzles
         self.puzzles = ["testPuzzle", "testPuzzle"]
         self.puzzleIndex = 0
-        self._nonogram = Nonogram(self._screen, self.puzzles[self.puzzleIndex])
+
+        # Create Misty
+        self.misty = Advice("192.168.2.216")
+
+        self._nonogram = Nonogram(self._screen, self.puzzles[self.puzzleIndex], self.misty)
 
     def eventLoop(self):
         for event in pg.event.get():
