@@ -3,12 +3,14 @@ import pygame as pg
 from pygame import mouse
 from nonogram import Nonogram
 from nonogram import PLAYING, SOLVED, TIMEOUT
+import time 
 
 # Constants for Trial State
 INTRO = 0
 PLAYING = 1
 ENDSCREEN = 2
 END = 3
+MAXTIME = 10
 
 class Game(object):
     def __init__(self) -> None:
@@ -29,6 +31,7 @@ class Game(object):
         self.puzzles = ["testPuzzle", "testPuzzle"]
         self.puzzleIndex = 0
         self._nonogram = Nonogram(self._screen, self.puzzles[self.puzzleIndex])
+        self._startTime = time.time()
 
     def eventLoop(self):
         for event in pg.event.get():
@@ -41,14 +44,14 @@ class Game(object):
                 elif self._running == INTRO:
                     self._running = PLAYING
 
-    def draw(self):
+    def draw(self, startTime):
         if self._running == INTRO:
             self.drawIntro()
         elif self._running == ENDSCREEN:
             self.drawEndscreen()
         else:
             self._screen.fill(pg.Color("white"))
-            self._nonogram.draw()
+            self._nonogram.draw(startTime)
 
     def drawIntro(self):
         self._screen.fill(pg.Color("blue"))
@@ -61,21 +64,43 @@ class Game(object):
         self._screen.fill(pg.Color("red"))
 
     def update(self):
+        finished = False
+
+        # calculate elapsed time
+        elapedTotalSeconds = time.time() - self._startTime
+        elapsedMinutes = elapedTotalSeconds // 60
+        elapsedSeconds = elapedTotalSeconds % 60
+
         self._nonogram.update(keys=self._keys)
+
+        # check to see if we advance to next puzzle
         if self._nonogram.gameMode == SOLVED:
+            finished = True
+        elif elapsedMinutes >= MAXTIME: # puzzle is taking longer than 10 minutes
+            finished = True
+
+        if finished:
+            # print out completion time to console
+            print("Puzzle " + str(self.puzzleIndex) +" Completed Time: {0:02}:{1:02}".format(int(elapsedMinutes), int(elapsedSeconds//1)))
             self.puzzleIndex += 1
             if self.puzzleIndex >= len(self.puzzles):
                 self._running = ENDSCREEN
             else:
                 self._nonogram = Nonogram(self._screen, self.puzzles[self.puzzleIndex])
+                self._startTime = time.time()
 
     def mainLoop(self) -> None:
         # main loop
+        first = True
         while self._running != END:
             self.eventLoop()
             if self._running == PLAYING:
+                # set time to begin at the start of puzzle
+                if first:
+                    self._startTime = time.time()
+                    first = False
                 self.update()
-            self.draw()
+            self.draw(self._startTime)
             pg.display.update()
 
 # define a main function
