@@ -1,5 +1,6 @@
 # import the pygame module, so you can use it
 import pygame as pg
+import time
 
 # some constants
 EMPTY = 0
@@ -119,7 +120,7 @@ class Nonogram(object):
             # self.prettyPrintGameState()
 
 
-    def draw(self):
+    def draw(self, startTime):
         # Draw the outer rectangle 
         outerW = self.cols * self._cellDims
         outerH = self.rows * self._cellDims
@@ -183,6 +184,19 @@ class Nonogram(object):
                     
                     # draw on the screen
                     self._screen.blit(textSurf, (x, y))
+
+        ## draw the timer
+        #  drawing box for timer
+        # pg.draw.rect(self._screen, self._gridColor, pg.Rect(outerX + outerW, outerY + outerH, self._cellDims * 3, self._cellDims * 2),  2) 
+        elapedTotalSeconds = time.time() - startTime
+        elapsedMinutes = elapedTotalSeconds // 60
+        elapsedSeconds = elapedTotalSeconds % 60
+        elapsedTime_string = "Time: {0:02}:{1:02}".format(int(elapsedMinutes), int(elapsedSeconds//1))
+        timeSurf = font.render(elapsedTime_string, False, (0, 0, 0))
+        # timeRect = timeSurf.get_rect()
+        self._screen.blit(timeSurf, (outerX + outerW + self._cellDims * 2, outerY))
+
+
 
     def checkWin(self):
         for row in range(self.rows):
