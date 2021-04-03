@@ -4,7 +4,6 @@ from nonogram import EMPTY, SELECTED, CROSSED
 
 # Advice numbers
 NUMBER_EQ_GRIDSIZE = 0
-
 OVERLAPPING = 1
 NUM_SEP_BY_1 = 2
 UNREACHABLE = 3
@@ -14,11 +13,6 @@ MERGE_AND_SPLIT = 6
 DISTINGUISH_COMPLETE_GROUPS = 7
 CONTRADICTION = 8
 LEN_ADVICE = 9
-
-from mistyPy import Robot
-import time
-import nonogram
-import random
 
 class Advice():
     def __init__(self, ip):
@@ -103,7 +97,7 @@ class Advice():
     
     # Check if overlapping technique is applicable
     def check_overlapping(self, nonogram):
-        # TODO: Test
+        # TODO: Test (seems to be working)
         # iterate through each row and check if the puzzle is greater than half
         # of the length of the row:
         #   If it is, then check of the middle elements in the list is filled
@@ -113,7 +107,7 @@ class Advice():
                 if puzzle[2] > nonogram.rows / 2:
                     gap = nonogram.rows - puzzle[2]
                     for j in range(gap, puzzle[2]):
-                        if nonogram.gameState[row][j] != 1:
+                        if nonogram.gameState[row][j] != SELECTED:
                             return True
 
         # check columns
@@ -122,14 +116,10 @@ class Advice():
             if puzzle[1] == 0 and puzzle[2] > nonogram.cols / 2:
                 gap = nonogram.cols - puzzle[2]
                 for row in range(gap, puzzle[2]):
-                    if nonogram.gameState[row][col] != 1:
+                    if nonogram.gameState[row][col] != SELECTED:
                         return True
-
         
         return False
-
-
-
 
     # TODO: Check if separated by 1 is appicable
     def check_sep_by_1(self, nonogram):
@@ -143,9 +133,26 @@ class Advice():
     def check_still_space(self, nonogram):
         pass
 
-    # TODO: Check if make complete is applicable
+    # Check if make complete is applicable
     def check_make_complete(self, nonogram):
-        pass
+        # TODO: Test
+        # Check rows to see if empty between two selected in row
+        for r in range(nonogram.rows):
+            row = nonogram.gameState[r]
+            if SELECTED in row:
+                i1 = row.index(SELECTED)
+                i2 = nonogram.rows - row[::-1].index(SELECTED) - 1
+                if EMPTY in row[i1:i2]:
+                    return True
+        # Check cols to see if empty between two selected
+        for c in range(nonogram.cols):
+            col = [nonogram.gameState[r][c] for r in range(nonogram.rows)]
+            if SELECTED in col:
+                i1 = col.index(SELECTED)
+                i2 = nonogram.cols - col[::-1].index(SELECTED) - 1
+                if EMPTY in col[i1:i2]:
+                    return True
+        return False
 
     # TODO: Check if merge split is applicable
     def check_merge_split(self, nonogram):
@@ -203,13 +210,20 @@ class Advice():
                 
 
 
-    # TODO: Check if contradiction is applicable
+    # Check if contradiction is applicable
     def check_contradiction(self, nonogram):
-        pass
+        # TODO: Test
+        # Return true if participant incorrectly marked a square
+        for row in range(nonogram.rows):
+            for col in range(nonogram.cols):
+                if nonogram.gameState[row][col] == SELECTED and nonogram.solutionState[row][col] == CROSSED:
+                    return True
+                if nonogram.gameState[row][col] == CROSSED and nonogram.solutionState[row][col] == SELECTED:
+                    return True
+        return False
 
     # return list of advice that can be given given game state
     def list_of_advice(self, nonogram):
-
         # check each advice and append it to the return list
         advice = list()
         for adv in range(LEN_ADVICE):
