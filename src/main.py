@@ -72,7 +72,7 @@ class Game(object):
             if self.puzzleIndex >= len(self.puzzles):
                 self._running = ENDSCREEN
             else:
-                self._nonogram = Nonogram(self._screen, self.puzzles[self.puzzleIndex])
+                self._nonogram = Nonogram(self._screen, self.puzzles[self.puzzleIndex], self.advice)
 
     def mainLoop(self) -> None:
         # main loop
