@@ -3,7 +3,7 @@ import pygame as pg
 from pygame import mouse
 from nonogram import Nonogram
 from nonogram import PLAYING, SOLVED, TIMEOUT
-import advice
+from advice import Advice
 
 # Constants for Trial State
 INTRO = 0
@@ -31,9 +31,9 @@ class Game(object):
         self.puzzleIndex = 0
 
         # Create Misty
-        self.misty = Advice("192.168.2.216")
+        self.advice = Advice("192.168.2.216")
 
-        self._nonogram = Nonogram(self._screen, self.puzzles[self.puzzleIndex], self.misty)
+        self._nonogram = Nonogram(self._screen, self.puzzles[self.puzzleIndex], self.advice)
 
     def eventLoop(self):
         for event in pg.event.get():
