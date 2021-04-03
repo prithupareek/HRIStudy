@@ -122,7 +122,7 @@ class Advice():
             if puzzle[1] == 0 and puzzle[2] > nonogram.cols / 2:
                 gap = nonogram.cols - puzzle[2]
                 for row in range(gap, puzzle[2]):
-                    if nonogram[row][col] != 1:
+                    if nonogram.gameState[row][col] != 1:
                         return True
 
         
@@ -153,7 +153,55 @@ class Advice():
     
     # TODO: Check if distinguish complete groups is applicable
     def check_distinguish_groups(self, nonogram):
-        pass
+        # for every row, if they have the solution for the row, check if they 
+        # crossed out every other cell
+        for row in range(nonogram.rows):
+            if nonogram.gameState[row].count(EMPTY) == 0:
+                continue
+            # check if row is correct, then return true
+            isCorrect = True
+            for col in range(nonogram.cols):
+                if nonogram.solutionState[row][col] == CROSSED:
+                    if (nonogram.gameState[row][col] == SELECTED):
+                        isCorrect = False
+                if nonogram.solutionState[row][col] == SELECTED:
+                    if nonogram.solutionState[row][col] != SELECTED:
+                        isCorrect = False
+            if isCorrect == True:
+                return True 
+        
+        
+        for col in range(nonogram.cols):
+            # Check columns
+            noCellEmpty = True 
+            # check if any cell in column is empty
+            for row in range(nonograms.row):
+                if nonogram.gameState[row][col] == EMPTY:
+                    noCellEmpty = False
+            
+            if noCellEmpty:
+                continue
+            
+            isCorrect = True
+            for row in range(nonogram.row):
+                if nonogram.solutionState[row][col] == CROSSED:
+                    if (nonogram.gameState[row][col] == SELECTED):
+                        isCorrect = False
+                if nonogram.solutionState[row][col] == SELECTED:
+                    if nonogram.solutionState[row][col] != SELECTED:
+                        isCorrect = False
+            if isCorrect == True:
+                return True
+
+        return False
+
+            
+
+
+
+
+                
+
 
     # TODO: Check if contradiction is applicable
     def check_contradiction(self, nonogram):
