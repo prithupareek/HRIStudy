@@ -193,6 +193,10 @@ class Nonogram(object):
                     return False
         return True
 
+    def adviceNeeded(self):
+        # TODO: Decide when to give advice
+        return False
+
     def update(self, keys):
         if self.adviceNeeded():
             self.advice.giveAdvice(self)
