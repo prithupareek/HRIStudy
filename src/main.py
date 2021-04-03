@@ -17,7 +17,7 @@ INTRO = 0
 PLAYING = 1
 ENDSCREEN = 2
 END = 3
-MAXTIME = 10
+MAXTIME = 1
 
 class Game(object):
     def __init__(self, pID, condition) -> None:
@@ -35,7 +35,7 @@ class Game(object):
         self._keys = pg.key.get_pressed()
     
         # Multiple puzzles
-        self.puzzles = ["testPuzzle", "testPuzzle"]
+        self.puzzles = ["testPuzzle", "testPuzzle", "testPuzzle"]
         self.puzzleIndex = 0
 
         self._nonogram = Nonogram(self._screen, self.puzzles[self.puzzleIndex])
@@ -43,6 +43,8 @@ class Game(object):
 
         self._participantID = pID
         self._condition = condition
+
+        self._solvetimes = []
 
     def eventLoop(self):
         for event in pg.event.get():
@@ -91,6 +93,8 @@ class Game(object):
             finished = True
 
         if finished:
+            # add to solve times
+            self._solvetimes.append(elapedTotalSeconds)
             # print out completion time to console
             print("Puzzle " + str(self.puzzleIndex) +" Completed Time: {0:02}:{1:02}".format(int(elapsedMinutes), int(elapsedSeconds//1)))
             self.puzzleIndex += 1
@@ -115,12 +119,22 @@ class Game(object):
             pg.display.update()
 
         # do the csv stuff here
+        self.saveData()
     
     def saveData(self):
         # open the data csv
+        print(self._solvetimes)
+
+        fields=[self._participantID, self._condition]
+
+        # add all the solvetimes
+        for time in self._solvetimes:
+            fields.append(time)
+
+        with open('data.csv', 'a+') as f:
+            writer = csv.writer(f)
+            writer.writerow(fields)
         
-
-
 def readArgs():
     pID = None
     condition = None
