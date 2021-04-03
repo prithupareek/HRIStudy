@@ -4,7 +4,6 @@ from nonogram import EMPTY, SELECTED, CROSSED
 
 # Advice numbers
 NUMBER_EQ_GRIDSIZE = 0
-
 OVERLAPPING = 1
 NUM_SEP_BY_1 = 2
 UNREACHABLE = 3
@@ -103,7 +102,7 @@ class Advice():
     
     # Check if overlapping technique is applicable
     def check_overlapping(self, nonogram):
-        # TODO: Test
+        # TODO: Test (seems to be working)
         # iterate through each row and check if the puzzle is greater than half
         # of the length of the row:
         #   If it is, then check of the middle elements in the list is filled
@@ -113,7 +112,7 @@ class Advice():
                 if puzzle[2] > nonogram.rows / 2:
                     gap = nonogram.rows - puzzle[2]
                     for j in range(gap, puzzle[2]):
-                        if nonogram.gameState[row][j] != 1:
+                        if nonogram.gameState[row][j] != SELECTED:
                             return True
 
         # check columns
@@ -122,7 +121,7 @@ class Advice():
             if puzzle[1] == 0 and puzzle[2] > nonogram.cols / 2:
                 gap = nonogram.cols - puzzle[2]
                 for row in range(gap, puzzle[2]):
-                    if nonogram[row][col] != 1:
+                    if nonogram.gameState[row][col] != SELECTED:
                         return True
 
         
@@ -161,7 +160,6 @@ class Advice():
 
     # return list of advice that can be given given game state
     def list_of_advice(self, nonogram):
-
         # check each advice and append it to the return list
         advice = list()
         for adv in range(LEN_ADVICE):
