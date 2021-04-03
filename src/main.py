@@ -3,16 +3,24 @@ import pygame as pg
 from pygame import mouse
 from nonogram import Nonogram
 from nonogram import PLAYING, SOLVED, TIMEOUT
-import advice
+import time 
+
+# for the command line args
+import sys
+import getopt
+
+# for saving participant data
+import csv
 
 # Constants for Trial State
 INTRO = 0
 PLAYING = 1
 ENDSCREEN = 2
 END = 3
+MAXTIME = 1
 
 class Game(object):
-    def __init__(self) -> None:
+    def __init__(self, pID, condition) -> None:
         # initialize the pygame module
         pg.init()
         pg.display.set_caption("HRI Study")
@@ -27,13 +35,16 @@ class Game(object):
         self._keys = pg.key.get_pressed()
     
         # Multiple puzzles
-        self.puzzles = ["testPuzzle", "testPuzzle"]
+        self.puzzles = ["testPuzzle", "testPuzzle", "testPuzzle"]
         self.puzzleIndex = 0
 
-        # Create Misty
-        self.misty = Advice("192.168.2.216")
+        self._nonogram = Nonogram(self._screen, self.puzzles[self.puzzleIndex])
+        self._startTime = time.time()
 
-        self._nonogram = Nonogram(self._screen, self.puzzles[self.puzzleIndex], self.misty)
+        self._participantID = pID
+        self._condition = condition
+
+        self._solvetimes = []
 
     def eventLoop(self):
         for event in pg.event.get():
@@ -46,14 +57,14 @@ class Game(object):
                 elif self._running == INTRO:
                     self._running = PLAYING
 
-    def draw(self):
+    def draw(self, startTime):
         if self._running == INTRO:
             self.drawIntro()
         elif self._running == ENDSCREEN:
             self.drawEndscreen()
         else:
             self._screen.fill(pg.Color("white"))
-            self._nonogram.draw()
+            self._nonogram.draw(startTime)
 
     def drawIntro(self):
         self._screen.fill(pg.Color("blue"))
@@ -66,27 +77,97 @@ class Game(object):
         self._screen.fill(pg.Color("red"))
 
     def update(self):
+        finished = False
+
+        # calculate elapsed time
+        elapedTotalSeconds = time.time() - self._startTime
+        elapsedMinutes = elapedTotalSeconds // 60
+        elapsedSeconds = elapedTotalSeconds % 60
+
         self._nonogram.update(keys=self._keys)
+
+        # check to see if we advance to next puzzle
         if self._nonogram.gameMode == SOLVED:
+            finished = True
+        elif elapsedMinutes >= MAXTIME: # puzzle is taking longer than 10 minutes
+            finished = True
+
+        if finished:
+            # add to solve times
+            self._solvetimes.append(elapedTotalSeconds)
+            # print out completion time to console
+            print("Puzzle " + str(self.puzzleIndex) +" Completed Time: {0:02}:{1:02}".format(int(elapsedMinutes), int(elapsedSeconds//1)))
             self.puzzleIndex += 1
             if self.puzzleIndex >= len(self.puzzles):
                 self._running = ENDSCREEN
             else:
                 self._nonogram = Nonogram(self._screen, self.puzzles[self.puzzleIndex])
+                self._startTime = time.time()
 
     def mainLoop(self) -> None:
         # main loop
+        first = True
         while self._running != END:
             self.eventLoop()
             if self._running == PLAYING:
+                # set time to begin at the start of puzzle
+                if first:
+                    self._startTime = time.time()
+                    first = False
                 self.update()
-            self.draw()
+            self.draw(self._startTime)
             pg.display.update()
+
+        # do the csv stuff here
+        self.saveData()
+    
+    def saveData(self):
+        # open the data csv
+        print(self._solvetimes)
+
+        fields=[self._participantID, self._condition]
+
+        # add all the solvetimes
+        for time in self._solvetimes:
+            fields.append(time)
+
+        with open('data.csv', 'a+') as f:
+            writer = csv.writer(f)
+            writer.writerow(fields)
+        
+def readArgs():
+    pID = None
+    condition = None
+
+    argv = sys.argv[1:]
+
+    try:
+        opts, args = getopt.getopt(argv, "p:c:")
+      
+    except:
+        print("Error: Must specify participant ID and puzzle condition")
+        sys.exit()
+  
+    for opt, arg in opts:
+        if opt in ['-p']:
+            pID = arg
+        elif opt in ['-c']:
+            condition = arg
+
+    if len(argv) < 2 or pID == None or condition == None:
+        print("Error: Must specify participant ID and puzzle condition")
+        sys.exit()
+
+    return pID, condition
 
 # define a main function
 def main():
-     game = Game()
-     game.mainLoop()
+
+    pID, condition = readArgs()
+
+    # TODO Comment back in before final commit
+    game = Game(pID, condition)
+    game.mainLoop()
      
 # run the main function only if this module is executed as the main script
 # (if you import this as a module then nothing is executed)
