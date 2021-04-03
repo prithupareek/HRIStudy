@@ -17,7 +17,7 @@ INTRO = 0
 PLAYING = 1
 ENDSCREEN = 2
 END = 3
-MAXTIME = 1
+MAXTIME = 15
 
 class Game(object):
     def __init__(self, pID, condition) -> None:
@@ -35,7 +35,7 @@ class Game(object):
         self._keys = pg.key.get_pressed()
     
         # Multiple puzzles
-        self.puzzles = ["testPuzzle", "testPuzzle", "testPuzzle"]
+        self.puzzles = ["puzzle1", "puzzle2", "puzzle1Flipped"]
         self.puzzleIndex = 0
 
         self._nonogram = Nonogram(self._screen, self.puzzles[self.puzzleIndex])

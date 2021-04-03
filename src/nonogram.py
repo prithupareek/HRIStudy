@@ -13,8 +13,8 @@ TIMEOUT = 2
 
 class Nonogram(object):
     def __init__(self, screen, puzzleName) -> None:
-        self.rows = 10
-        self.cols = 10
+        self.rows = 8
+        self.cols = 8
 
         self._screen = screen
         self._width, self._height = self._screen.get_size()
