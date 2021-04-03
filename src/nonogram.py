@@ -32,8 +32,12 @@ class Nonogram(object):
         self.advice = advice
         self.puzzle, self.solutionState = self.loadPuzzle(puzzleName)
 
+        # Variables for determining advice
         self.adviceCounts = 0
         self.lastClickTime = None
+        self.count0 = False
+        self.count22 = False
+        self.count44 = False
 
     def loadPuzzle(self, puzzleName):
         puzzleFilePath = "puzzles/" + puzzleName + ".txt"
@@ -211,12 +215,24 @@ class Nonogram(object):
         if self.adviceCounts >= 3:
             return False
         count = self.getPlacedCount()
-        # If participant just started or placed 1/3 or 2/3 block
-        if count == 0 or count == 22 or count == 44:
+        # If participant just started
+        if count == 0 and not self.count0:
+            self.count0 = True
+            self.adviceCounts += 1
+            return True
+        # If participant place 1/3 of blocks
+        if count == 22 and not self.count22:
+            self.count22 = True
+            self.adviceCounts += 1
+            return True
+        # If participant place 2/3 of blocks
+        if count == 44 and not self.count44:
+            self.count44 = True
             self.adviceCounts += 1
             return True
         # Otherwise, if has been 45 sec since last click
         if self.lastClickTime is not None and time.time() - self.lastClickTime > 45:
+            self.lastClickTime = None
             self.adviceCounts += 1
             return True
         return False
