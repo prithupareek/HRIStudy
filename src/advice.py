@@ -12,6 +12,7 @@ CONTRADICTION = 8
 
 from mistyPy import Robot
 import time
+import nonogram
 
 class Advice():
     def __init__(self, ip):
@@ -49,8 +50,29 @@ class Advice():
         return NUMBER_EQ_GRIDSIZE
 
     def check_num_eq_gridsize(self, nonogram):
-        length = len(nonogram.gameState)
-        solution = 
+        length = nonogram.rows
+        solution = nonogram.solutionState
+
+        # check the rows
+        for row in range(length):
+            if solution[row].count(1) == length:
+                if nonogram.gameState[row].count(1) != length:
+                    return True
+            if solution[row].count(1) == 0:
+                if nonogram.gameState[row].count(1) != 0:
+                    return True
+
+        for puzzle in nonogram.puzzle[:length]:
+            if puzzle[2] != length:
+                continue
+            col = puzzle[2]
+            for i in range(length):
+                if nonogram.gameState[i][col] != 1:
+                    return True
+        return False
+
+        
+
         
         
 
