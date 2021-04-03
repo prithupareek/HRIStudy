@@ -3,6 +3,7 @@ import pygame as pg
 from pygame import mouse
 from nonogram import Nonogram
 from nonogram import PLAYING, SOLVED, TIMEOUT
+import advice
 
 # Constants for Trial State
 INTRO = 0
