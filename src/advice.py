@@ -14,11 +14,6 @@ DISTINGUISH_COMPLETE_GROUPS = 7
 CONTRADICTION = 8
 LEN_ADVICE = 9
 
-from mistyPy import Robot
-import time
-import nonogram
-import random
-
 class Advice():
     def __init__(self, ip):
         # self.misty = Robot(ip) TODO: uncomment later
@@ -123,12 +118,8 @@ class Advice():
                 for row in range(gap, puzzle[2]):
                     if nonogram.gameState[row][col] != SELECTED:
                         return True
-
         
         return False
-
-
-
 
     # TODO: Check if separated by 1 is appicable
     def check_sep_by_1(self, nonogram):
@@ -154,9 +145,17 @@ class Advice():
     def check_distinguish_groups(self, nonogram):
         pass
 
-    # TODO: Check if contradiction is applicable
+    # Check if contradiction is applicable
     def check_contradiction(self, nonogram):
-        pass
+        # TODO: Test
+        # Return true if participant incorrectly marked a square
+        for row in range(nonogram.rows):
+            for col in range(nonogram.cols):
+                if nonogram.gameState[row][col] == SELECTED and nonogram.solutionState[row][col] == CROSSED:
+                    return True
+                if nonogram.gameState[row][col] == CROSSED and nonogram.solutionState[row][col] == SELECTED:
+                    return True
+        return False
 
     # return list of advice that can be given given game state
     def list_of_advice(self, nonogram):
