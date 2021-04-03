@@ -57,28 +57,17 @@ class Advice():
         bestAdvice = self.getBestAdvice(nonogram)
         print(bestAdvice)
         self.usedAdvice[bestAdvice] = True
-<<<<<<< HEAD
-        # TODO: Look at board and back - Maybe threading
-        self.misty.playAudio(self.adviceAudioMap[bestAdvice])
-=======
         # TODO: Look at board and back - Maybe threading?
         # self.misty.playAudio(self.adviceAudioMap[bestAdvice]) TODO: uncomment later
->>>>>>> dc6f655dda2d1a46d3c5aa5f8ca83aa792d007f6
     
     # Decide randomly from applicable/unused advice
     def getBestAdvice(self, nonogram):
         adviceList = self.list_of_advice(nonogram)
-<<<<<<< HEAD
-        if adviceList == []: 
-            pass # TODO: pick one that hasn't been used
-        return NUMBER_EQ_GRIDSIZE #TODO: Fix this
-=======
         if adviceList == []:
             # If none are applicable, get all of the unused advices
             adviceList = [advice for advice in self.usedAdvice if not self.usedAdvice[advice]]
         print(adviceList)
         return random.choice(adviceList)
->>>>>>> dc6f655dda2d1a46d3c5aa5f8ca83aa792d007f6
 
 
     # Check if gridsize is applicable
@@ -139,10 +128,12 @@ class Advice():
             if sum(nonogram.puzzle[i]) + len([a for a in nonogram.puzzle if a != 0]) - 1 == nonogram.rows:
                 if i < nonogram.cols:
                     if EMPTY in [nonogram.gameState[r][i] for r in range(nonogram.row)]:
-                        return true
+                        return True
                 else:
                     row = i - nonogram.cols
-                    if EMPTY in nonogram.gameState[row]
+                    if EMPTY in nonogram.gameState[row]:
+                        return True
+        return False
 
     # TODO: Check if unreachable is applicable
     def check_unreachable(self, nonogram):
