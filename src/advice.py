@@ -108,7 +108,7 @@ class Advice():
         # of the length of the row:
         #   If it is, then check of the middle elements in the list is filled
         for row in range(nonogram.rows):
-            puzzle = nonogram.puzzle[nonogram.rows + row]:
+            puzzle = nonogram.puzzle[nonogram.rows + row]
             if puzzle[1] == 0:
                 if puzzle[2] > nonogram.rows / 2:
                     gap = nonogram.rows - puzzle[2]
