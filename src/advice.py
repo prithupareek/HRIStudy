@@ -186,9 +186,13 @@ class Advice():
                     return True
         return False
 
-    # TODO: Check if merge split is applicable
+    # Check if merge split is applicable
     def check_merge_split(self, nonogram):
-        pass
+        # TODO: Test
+        # Randomly generate heuristic
+        if random.randint(0, 99) > 90:
+            return True
+        return False
     
     def check_distinguish_groups(self, nonogram):
         # for every row, if they have the solution for the row, check if they 
