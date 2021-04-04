@@ -17,7 +17,9 @@ INTRO = 0
 PLAYING = 1
 ENDSCREEN = 2
 END = 3
-MAXTIME = 15
+BREAK = 4
+MAXTIME = 15    # minutes
+BREAKTIME = 3   # minutes
 
 class Game(object):
     def __init__(self, pID, condition) -> None:
@@ -62,6 +64,8 @@ class Game(object):
             self.drawIntro()
         elif self._running == ENDSCREEN:
             self.drawEndscreen()
+        elif self._running == BREAK:
+            self.drawBreak(startTime)
         else:
             self._screen.fill(pg.Color("white"))
             self._nonogram.draw(startTime)
@@ -76,6 +80,17 @@ class Game(object):
     def drawEndscreen(self):
         self._screen.fill(pg.Color("red"))
 
+    def drawBreak(self, startTime):
+        self._screen.fill(pg.Color("orange"))
+        font = pg.font.SysFont('Helvetica', 30)
+        elapedTotalSeconds = time.time() - startTime
+        elapsedMinutes = elapedTotalSeconds // 60
+        elapsedSeconds = elapedTotalSeconds % 60
+        elapsedTime_string = "Break Time: {0:02}:{1:02}".format(int(elapsedMinutes), int(elapsedSeconds//1))
+        timeSurf = font.render(elapsedTime_string, False, (0, 0, 0))
+        # timeRect = timeSurf.get_rect()
+        self._screen.blit(timeSurf, (200, 200))
+
     def update(self):
         finished = False
 
@@ -84,24 +99,32 @@ class Game(object):
         elapsedMinutes = elapedTotalSeconds // 60
         elapsedSeconds = elapedTotalSeconds % 60
 
-        self._nonogram.update(keys=self._keys)
+        if self._running == PLAYING:
+            self._nonogram.update(keys=self._keys)
 
         # check to see if we advance to next puzzle
         if self._nonogram.gameMode == SOLVED:
             finished = True
-        elif elapsedMinutes >= MAXTIME: # puzzle is taking longer than 10 minutes
+        elif self._running == PLAYING and elapsedMinutes >= MAXTIME: # puzzle is taking longer than 10 minutes
+            finished = True
+        elif self._running == BREAK and elapsedMinutes >= BREAKTIME: # break is over
             finished = True
 
         if finished:
-            # add to solve times
-            self._solvetimes.append(elapedTotalSeconds)
-            # print out completion time to console
-            print("Puzzle " + str(self.puzzleIndex) +" Completed Time: {0:02}:{1:02}".format(int(elapsedMinutes), int(elapsedSeconds//1)))
-            self.puzzleIndex += 1
-            if self.puzzleIndex >= len(self.puzzles):
-                self._running = ENDSCREEN
-            else:
-                self._nonogram = Nonogram(self._screen, self.puzzles[self.puzzleIndex])
+            if self._running == PLAYING:
+                # add to solve times
+                self._solvetimes.append(elapedTotalSeconds//1)
+                # print out completion time to console
+                print("Puzzle " + str(self.puzzleIndex) +" Completed Time: {0:02}:{1:02}".format(int(elapsedMinutes), int(elapsedSeconds//1)))
+                self.puzzleIndex += 1
+                if self.puzzleIndex >= len(self.puzzles):
+                    self._running = ENDSCREEN
+                else:
+                    self._running = BREAK
+                    self._nonogram = Nonogram(self._screen, self.puzzles[self.puzzleIndex])
+                    self._startTime = time.time()
+            elif self._running == BREAK:
+                self._running = PLAYING
                 self._startTime = time.time()
 
     def mainLoop(self) -> None:
@@ -109,7 +132,7 @@ class Game(object):
         first = True
         while self._running != END:
             self.eventLoop()
-            if self._running == PLAYING:
+            if self._running == PLAYING or self._running == BREAK:
                 # set time to begin at the start of puzzle
                 if first:
                     self._startTime = time.time()
