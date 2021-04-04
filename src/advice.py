@@ -98,7 +98,6 @@ class Advice():
     
     # Check if overlapping technique is applicable
     def check_overlapping(self, nonogram):
-        # TODO: Test (seems to be working)
         # iterate through each row and check if the puzzle is greater than half
         # of the length of the row:
         #   If it is, then check of the middle elements in the list is filled
@@ -122,8 +121,9 @@ class Advice():
         
         return False
 
-    # TODO: Check if separated by 1 is appicable
+    # Check if separated by 1 is appicable
     def check_sep_by_1(self, nonogram):
+        # TODO: Test
         for i in nonogram.puzzle:
             if sum(nonogram.puzzle[i]) + len([a for a in nonogram.puzzle if a != 0]) - 1 == nonogram.rows:
                 if i < nonogram.cols:
@@ -168,7 +168,6 @@ class Advice():
 
     # Check if make complete is applicable
     def check_make_complete(self, nonogram):
-        # TODO: Test
         # Check rows to see if empty between two selected in row
         for r in range(nonogram.rows):
             row = nonogram.gameState[r]
@@ -234,13 +233,6 @@ class Advice():
                 return True
 
         return False
-
-            
-
-
-
-
-                
 
 
     # Check if contradiction is applicable
