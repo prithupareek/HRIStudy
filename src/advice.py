@@ -190,7 +190,6 @@ class Advice():
     def check_merge_split(self, nonogram):
         pass
     
-    # TODO: Check if distinguish complete groups is applicable
     def check_distinguish_groups(self, nonogram):
         # for every row, if they have the solution for the row, check if they 
         # crossed out every other cell
@@ -204,7 +203,7 @@ class Advice():
                     if (nonogram.gameState[row][col] == SELECTED):
                         isCorrect = False
                 if nonogram.solutionState[row][col] == SELECTED:
-                    if nonogram.solutionState[row][col] != SELECTED:
+                    if nonogram.gameState[row][col] != SELECTED:
                         isCorrect = False
             if isCorrect == True:
                 return True 
@@ -214,7 +213,7 @@ class Advice():
             # Check columns
             noCellEmpty = True 
             # check if any cell in column is empty
-            for row in range(nonograms.row):
+            for row in range(nonogram.rows):
                 if nonogram.gameState[row][col] == EMPTY:
                     noCellEmpty = False
             
@@ -222,12 +221,12 @@ class Advice():
                 continue
             
             isCorrect = True
-            for row in range(nonogram.row):
+            for row in range(nonogram.rows):
                 if nonogram.solutionState[row][col] == CROSSED:
                     if (nonogram.gameState[row][col] == SELECTED):
                         isCorrect = False
                 if nonogram.solutionState[row][col] == SELECTED:
-                    if nonogram.solutionState[row][col] != SELECTED:
+                    if nonogram.gameState[row][col] != SELECTED:
                         isCorrect = False
             if isCorrect == True:
                 return True
