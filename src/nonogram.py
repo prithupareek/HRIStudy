@@ -231,7 +231,7 @@ class Nonogram(object):
             self.adviceCounts += 1
             return True
         # Otherwise, if has been 45 sec since last click
-        if self.lastClickTime is not None and time.time() - self.lastClickTime > 45:
+        if self.lastClickTime is not None and time.time() - self.lastClickTime > 5:
             self.lastClickTime = None
             self.adviceCounts += 1
             return True
