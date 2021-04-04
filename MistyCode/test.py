@@ -11,7 +11,7 @@ misty.changeLED(0, 255, 255)
 #         misty.moveHeadPosition(0, 0, -5, 100) # center the head
 #     else:
 #         misty.moveHeadPosition(0, 0, 5, 100) # center the head
-#     time.sleep(1)
+#     time.sleep(1)z
 
 # misty.moveHeadPosition(0, 0, 0, 100) # center the head
 # misty.changeLED(255, 0, 0)

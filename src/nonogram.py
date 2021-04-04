@@ -35,9 +35,9 @@ class Nonogram(object):
         # Variables for determining advice
         self.adviceCounts = 0
         self.lastClickTime = None
-        self.count0 = False
-        self.countThird = False
-        self.countTwoThirds = False
+        self.countFourth = False
+        self.countHalf = False
+        self.countThreeFourth = False
 
     def loadPuzzle(self, puzzleName):
         puzzleFilePath = "puzzles/" + puzzleName + ".txt"
@@ -215,19 +215,19 @@ class Nonogram(object):
         if self.adviceCounts >= 3:
             return False
         count = self.getPlacedCount()
-        # If participant just started
-        if count == 0 and not self.count0:
-            self.count0 = True
+        # If participant is 1/4 done
+        if count == int(self.rows*self.cols/4) and not self.countFourth:
+            self.countFourth = True
             self.adviceCounts += 1
             return True
-        # If participant place 1/3 of blocks
-        if count == int(self.rows*self.cols/3) and not self.countThird:
-            self.countThird = True
+        # If participant place 1/2 of blocks
+        if count == int(self.rows*self.cols/2) and not self.countHalf:
+            self.countHalf = True
             self.adviceCounts += 1
             return True
-        # If participant place 2/3 of blocks
-        if count == int(2/3*self.rows*self.cols) and not self.countTwoThirds:
-            self.countTwoThirds = True
+        # If participant place 3/4 of blocks
+        if count == int(3/4*self.rows*self.cols) and not self.countThreeFourth:
+            self.countThreeFourth = True
             self.adviceCounts += 1
             return True
         # Otherwise, if has been 45 sec since last click
