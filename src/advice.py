@@ -209,6 +209,7 @@ class Advice():
                         if currCount <= maxStretch:
                             return True
                         currCount = 0
+        return False
                     
 
 
