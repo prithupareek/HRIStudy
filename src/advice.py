@@ -189,8 +189,8 @@ class Advice():
     # Check if merge split is applicable
     def check_merge_split(self, nonogram):
         # TODO: Test
-        # Randomly generate heuristic
-        if random.randint(0, 99) > 90:
+        # Randomly generate heuristic - only when more than 1/3 placed
+        if random.randint(0, 99) > 90 and nonogram.getPlacedCount() >= int(self.rows*self.cols/3):
             return True
         return False
     
