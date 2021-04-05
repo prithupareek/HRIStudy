@@ -12,7 +12,7 @@ SOLVED = 1
 TIMEOUT = 2
 
 class Nonogram(object):
-    def __init__(self, screen, puzzleName) -> None:
+    def __init__(self, screen, puzzleName, advice) -> None:
         self.rows = 8
         self.cols = 8
 
@@ -29,7 +29,17 @@ class Nonogram(object):
         # self.prettyPrintGameState()
 
         self.gameMode = PLAYING
+        
+        self.advice = advice
+        
         self.puzzle, self.solutionState = self.loadPuzzle(puzzleName)
+
+        # Variables for determining advice
+        self.adviceCounts = 0
+        self.lastClickTime = None
+        self.countFourth = False
+        self.countHalf = False
+        self.countThreeFourth = False
 
     def loadPuzzle(self, puzzleName):
         puzzleFilePath = "puzzles/" + puzzleName + ".txt"
@@ -115,7 +125,7 @@ class Nonogram(object):
         if (row, col) != (-1, -1):
             # modify the game state appropriately
             self.gameState[row][col] = (self.gameState[row][col] + 1) % 3
-
+            self.lastClickTime = time.time()
             # self.prettyPrintGameState()
 
 
@@ -206,6 +216,44 @@ class Nonogram(object):
                     return False
         return True
 
+    # Gets a count of the number of placed cells
+    def getPlacedCount(self):
+        count = 0
+        for row in range(self.rows):
+            for col in range(self.cols):
+                if self.gameState[row][col] != EMPTY:
+                    count += 1
+        return count
+
+    # Decide when to give advice
+    def adviceNeeded(self):
+        if self.adviceCounts >= 3:
+            return False
+        count = self.getPlacedCount()
+        # If participant is 1/4 done
+        if count == int(self.rows*self.cols/4) and not self.countFourth:
+            self.countFourth = True
+            self.adviceCounts += 1
+            return True
+        # If participant place 1/2 of blocks
+        if count == int(self.rows*self.cols/2) and not self.countHalf:
+            self.countHalf = True
+            self.adviceCounts += 1
+            return True
+        # If participant place 3/4 of blocks
+        if count == int(3/4*self.rows*self.cols) and not self.countThreeFourth:
+            self.countThreeFourth = True
+            self.adviceCounts += 1
+            return True
+        # Otherwise, if has been 45 sec since last click
+        if self.lastClickTime is not None and time.time() - self.lastClickTime > 45: 
+            self.lastClickTime = None
+            self.adviceCounts += 1
+            return True
+        return False
+
     def update(self, keys):
+        if self.adviceNeeded():
+            self.advice.giveAdvice(self)
         if self.checkWin():
             self.gameMode = SOLVED

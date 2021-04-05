@@ -3,6 +3,7 @@ import pygame as pg
 from pygame import mouse
 from nonogram import Nonogram
 from nonogram import PLAYING, SOLVED, TIMEOUT
+from advice import Advice
 import time 
 
 # for the command line args
@@ -40,7 +41,10 @@ class Game(object):
         self.puzzles = ["puzzle1", "puzzle2", "puzzle1Flipped"]
         self.puzzleIndex = 0
 
-        self._nonogram = Nonogram(self._screen, self.puzzles[self.puzzleIndex])
+        # Create Misty object
+        self.advice = Advice("192.168.2.216")
+
+        self._nonogram = Nonogram(self._screen, self.puzzles[self.puzzleIndex], self.advice)
         self._startTime = time.time()
 
         self._participantID = pID
