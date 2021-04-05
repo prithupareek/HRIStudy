@@ -204,12 +204,6 @@ class Advice():
 
             
 
-
-
-
-                
-
-
     # Check if contradiction is applicable
     def check_contradiction(self, nonogram):
         # TODO: Test
