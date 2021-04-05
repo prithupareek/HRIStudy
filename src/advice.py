@@ -124,8 +124,8 @@ class Advice():
     # Check if separated by 1 is appicable
     def check_sep_by_1(self, nonogram):
         # TODO: Test
-        for i in nonogram.puzzle:
-            if sum(nonogram.puzzle[i]) + len([a for a in nonogram.puzzle if a != 0]) - 1 == nonogram.rows:
+        for i in range(len(nonogram.puzzle)):
+            if sum(nonogram.puzzle[i]) + len([a for a in nonogram.puzzle[i] if a != 0]) - 1 == nonogram.rows:
                 if i < nonogram.cols:
                     if EMPTY in [nonogram.gameState[r][i] for r in range(nonogram.row)]:
                         return True
@@ -151,8 +151,8 @@ class Advice():
                             return True
         # Check col to see if empty on either side of selected
         for c in range(nonogram.cols):
-            col = [nonogram.gameState[r][c] for r in range(nonograms.rows)]
-            solCol = [nonogram.solutionState[r][c] for r in range(nonograms.cols)]
+            col = [nonogram.gameState[r][c] for r in range(nonogram.rows)]
+            solCol = [nonogram.solutionState[r][c] for r in range(nonogram.cols)]
             for r in range(nonogram.rows):
                 if solCol[r] == SELECTED:
                     if col[r] != SELECTED:
@@ -162,7 +162,6 @@ class Advice():
                             return True
         return False
 
-    # TODO: Check if still space is applicable
     def check_still_space(self, nonogram):
         for row in range(nonogram.rows):
             puzzle = nonogram.puzzle[nonogram.rows + row]
@@ -171,7 +170,7 @@ class Advice():
             counting = True
             for col in range(nonogram.cols):
                 if nonogram.gameState[row][col] == SELECTED:
-                    counting == False
+                    counting = False
                     currCount = 0
                 if nonogram.gameState[row][col] == EMPTY:
                     if counting:
@@ -183,7 +182,7 @@ class Advice():
                         counting = True
                         continue
                     else:
-                        if currCount <= maxStretch:
+                        if currCount <= maxStretch and currCount != 0:
                             return True
                         currCount = 0
         
@@ -194,7 +193,7 @@ class Advice():
             counting = True
             for row in range(nonogram.rows):
                 if nonogram.gameState[row][col] == SELECTED:
-                    counting == False
+                    counting = False
                     currCount = 0
                 if nonogram.gameState[row][col] == EMPTY:
                     if counting:
@@ -206,7 +205,7 @@ class Advice():
                         counting = True
                         continue
                     else:
-                        if currCount <= maxStretch:
+                        if currCount <= maxStretch and currCount != 0:
                             return True
                         currCount = 0
         return False
