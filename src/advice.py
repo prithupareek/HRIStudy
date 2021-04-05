@@ -52,6 +52,7 @@ class Advice():
                             CONTRADICTION: self.check_contradiction
                         }
         
+
     def giveAdvice(self, nonogram):
         bestAdvice = self.getBestAdvice(nonogram)
         print(bestAdvice)
@@ -97,7 +98,6 @@ class Advice():
     
     # Check if overlapping technique is applicable
     def check_overlapping(self, nonogram):
-        # TODO: Test (seems to be working)
         # iterate through each row and check if the puzzle is greater than half
         # of the length of the row:
         #   If it is, then check of the middle elements in the list is filled
@@ -121,21 +121,101 @@ class Advice():
         
         return False
 
-    # TODO: Check if separated by 1 is appicable
+    # Check if separated by 1 is appicable
     def check_sep_by_1(self, nonogram):
-        pass
+        # TODO: Test
+        for i in nonogram.puzzle:
+            if sum(nonogram.puzzle[i]) + len([a for a in nonogram.puzzle if a != 0]) - 1 == nonogram.rows:
+                if i < nonogram.cols:
+                    if EMPTY in [nonogram.gameState[r][i] for r in range(nonogram.row)]:
+                        return True
+                else:
+                    row = i - nonogram.cols
+                    if EMPTY in nonogram.gameState[row]:
+                        return True
+        return False
 
-    # TODO: Check if unreachable is applicable
+    # Check if unreachable is applicable
     def check_unreachable(self, nonogram):
-        pass
+        # TODO: Test
+        # Check row to see if empty on either side of selected
+        for r in range(nonogram.rows):
+            row = nonogram.gameState[r]
+            solRow = nonogram.solutionState[r]
+            for c in range(nonogram.cols):
+                if solRow[c] == SELECTED:
+                    if row[c] != SELECTED:
+                        break
+                    if row[c] == SELECTED:
+                        if EMPTY in row[:c] and EMPTY in row[c+1:]:
+                            return True
+        # Check col to see if empty on either side of selected
+        for c in range(nonogram.cols):
+            col = [nonogram.gameState[r][c] for r in range(nonograms.rows)]
+            solCol = [nonogram.solutionState[r][c] for r in range(nonograms.cols)]
+            for r in range(nonogram.rows):
+                if solCol[r] == SELECTED:
+                    if col[r] != SELECTED:
+                        break
+                    if col[r] == SELECTED:
+                        if EMPTY in col[:r] and EMPTY in col[r+1:]:
+                            return True
+        return False
 
     # TODO: Check if still space is applicable
     def check_still_space(self, nonogram):
-        pass
+        for row in range(nonogram.rows):
+            puzzle = nonogram.puzzle[nonogram.rows + row]
+            maxStretch = max(puzzle)
+            currCount = 0
+            counting = True
+            for col in range(nonogram.cols):
+                if nonogram.gameState[row][col] == SELECTED:
+                    counting == False
+                    currCount = 0
+                if nonogram.gameState[row][col] == EMPTY:
+                    if counting:
+                        currCount += 1
+                    else: 
+                        continue
+                if nonogram.gameState[row][col] == CROSSED:
+                    if not counting:
+                        counting = True
+                        continue
+                    else:
+                        if currCount <= maxStretch:
+                            return True
+                        currCount = 0
+        
+        for col in range(nonogram.cols):
+            puzzle = nonogram.puzzle[col]
+            maxStrech = max(puzzle)
+            currCount = 0
+            counting = True
+            for row in range(nonogram.rows):
+                if nonogram.gameState[row][col] == SELECTED:
+                    counting == False
+                    currCount = 0
+                if nonogram.gameState[row][col] == EMPTY:
+                    if counting:
+                        currCount += 1
+                    else: 
+                        continue
+                if nonogram.gameState[row][col] == CROSSED:
+                    if not counting:
+                        counting = True
+                        continue
+                    else:
+                        if currCount <= maxStretch:
+                            return True
+                        currCount = 0
+                    
+
+
+
 
     # Check if make complete is applicable
     def check_make_complete(self, nonogram):
-        # TODO: Test
         # Check rows to see if empty between two selected in row
         for r in range(nonogram.rows):
             row = nonogram.gameState[r]
@@ -154,11 +234,14 @@ class Advice():
                     return True
         return False
 
-    # TODO: Check if merge split is applicable
+    # Check if merge split is applicable
     def check_merge_split(self, nonogram):
-        pass
+        # TODO: Test
+        # Randomly generate heuristic - only when more than 1/3 placed
+        if random.randint(0, 99) > 90 and nonogram.getPlacedCount() >= int(self.rows*self.cols/3):
+            return True
+        return False
     
-    # TODO: Check if distinguish complete groups is applicable
     def check_distinguish_groups(self, nonogram):
         # for every row, if they have the solution for the row, check if they 
         # crossed out every other cell
@@ -172,7 +255,7 @@ class Advice():
                     if (nonogram.gameState[row][col] == SELECTED):
                         isCorrect = False
                 if nonogram.solutionState[row][col] == SELECTED:
-                    if nonogram.solutionState[row][col] != SELECTED:
+                    if nonogram.gameState[row][col] != SELECTED:
                         isCorrect = False
             if isCorrect == True:
                 return True 
@@ -182,7 +265,7 @@ class Advice():
             # Check columns
             noCellEmpty = True 
             # check if any cell in column is empty
-            for row in range(nonograms.row):
+            for row in range(nonogram.rows):
                 if nonogram.gameState[row][col] == EMPTY:
                     noCellEmpty = False
             
@@ -190,19 +273,18 @@ class Advice():
                 continue
             
             isCorrect = True
-            for row in range(nonogram.row):
+            for row in range(nonogram.rows):
                 if nonogram.solutionState[row][col] == CROSSED:
                     if (nonogram.gameState[row][col] == SELECTED):
                         isCorrect = False
                 if nonogram.solutionState[row][col] == SELECTED:
-                    if nonogram.solutionState[row][col] != SELECTED:
+                    if nonogram.gameState[row][col] != SELECTED:
                         isCorrect = False
             if isCorrect == True:
                 return True
 
         return False
 
-            
 
     # Check if contradiction is applicable
     def check_contradiction(self, nonogram):
