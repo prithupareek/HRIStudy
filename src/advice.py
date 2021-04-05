@@ -17,17 +17,17 @@ LEN_ADVICE = 9
 class Advice():
     def __init__(self, ip):
         # self.misty = Robot(ip) TODO: uncomment later
-        # TODO Create map from advice numbers to audio file names
+        # Map from advice numbers to audio file names
         self.adviceAudioMap = {
-                            NUMBER_EQ_GRIDSIZE: "",
-                            OVERLAPPING: "",
-                            NUM_SEP_BY_1: "",
-                            UNREACHABLE: "",
-                            STILL_SPACE: "",
-                            MAKE_COMPLETE: "",
-                            MERGE_AND_SPLIT: "",
-                            DISTINGUISH_COMPLETE_GROUPS: "",
-                            CONTRADICTION: ""
+                            NUMBER_EQ_GRIDSIZE: "1.wav",
+                            OVERLAPPING: "2.wav",
+                            NUM_SEP_BY_1: "3.wav",
+                            UNREACHABLE: "4.wav",
+                            STILL_SPACE: "5.wav",
+                            MAKE_COMPLETE: "6.wav",
+                            MERGE_AND_SPLIT: "7.wav",
+                            DISTINGUISH_COMPLETE_GROUPS: "8.wav",
+                            CONTRADICTION: "9.wav"
                         }
         self.usedAdvice = {
                             NUMBER_EQ_GRIDSIZE: False,
