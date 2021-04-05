@@ -1,0 +1,18 @@
+# puzzle2
+# 0 implies no number in that position, three positions per rectangle
+
+# Top Row (Left -> Right, Top -> Bottom)
+(0,1,2), (1,1,1), (0,3,2), (2,1,3), (0,6,1), (1,1,1), (0,2,1), (1,1,1)
+
+# Left Column (Top -> Bottom, Left -> Right)
+(0,1,4), (1,2,2), (0,2,1), (0,3,2), (0,2,1), (0,3,1), (0,1,2), (0,1,4)
+
+# Solution Game State
+| 2 1 2 1 1 1 1 2
+| 1 2 2 1 1 2 1 1
+| 2 1 1 2 1 2 2 2
+| 2 2 1 1 1 2 1 1
+| 2 1 1 2 1 2 2 2
+| 2 2 2 1 1 1 2 1
+| 1 2 1 1 2 2 2 2
+| 1 2 1 1 1 1 2 2

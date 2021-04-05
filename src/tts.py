@@ -14,8 +14,8 @@ def generateAudioFile(text, filename):
 
     try:
         # Request speech synthesis
-        response = polly.synthesize_speech(Text=text, OutputFormat="pcm",
-                                            VoiceId="Joanna")
+        response = polly.synthesize_speech(Engine='neural', Text=text, OutputFormat="pcm",
+                                            VoiceId="Amy")
     except (BotoCoreError, ClientError) as error:
         # The service returned an error, exit gracefully
         print(error)
@@ -49,7 +49,15 @@ def generateAudioFile(text, filename):
     return wav_path
 
 def main():
-    print(generateAudioFile("Hello, my name is Misty", "test"))
+
+    adviceFile = open('advice.txt', 'r')
+    adviceNum = 1
+
+    for advice in adviceFile:
+        generateAudioFile(advice, str(adviceNum))
+        adviceNum += 1
+
+    # print(generateAudioFile("Hello, my name is Misty. I'll be here to help you during your puzzles.", "introduction"))
 
 
 if __name__ == "__main__":

@@ -1,0 +1,9 @@
+In your 8x8 game, if there is a column or row that is equal to 8, then you can fill all of the boxes in that line. Similarly, if a row or column is labeled as 0, you can cross out every cell of that line.
+In your 8x8 game, if there is only one stretch for a row or column and it is larger than or equal to 5, see which squares will be occupied if it starts on the far left, or far right. Then, you can fill the overlapping squares in the center with black. As a general rule of thumb, the number of crossed out squares on each side of the stretch is equal to 8, minus the length of the stretch.
+Sometimes, the sum of the stretches in a row or column, plus 1 space between each stretch, is equal to the size of the grid. In this case, you can fill in black squares, leaving 1 red X between the stretches.
+Sometimes a stretch is not long enough to reach certain cells, these can be crossed out.
+If you cross out a cell, see if there is still enough space on either side of the red X for all of the stretches and spaces to fit. If not, you have to fill in stretches on both sides of the red X.
+If you’ve filled out squares for a new row or column, try checking to see if this forces neighboring squares to be filled in or not.
+Coloring missing cells is easier with more cells already colored in a row and column. Two stretches of black cells can be merged, and sometimes they must be split.
+If you have finished filling in a group of cells in a row or a column, you can mark one cell on either side with an X since you know that you can’t expand the group any further.
+If your next move is to choose whether a certain box is supposed to be filled in black or not, then try filling it black and see if you can solve the puzzle! If you find that you can’t, then it must be that that square should not be filled in.
