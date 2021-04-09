@@ -41,6 +41,9 @@ class Nonogram(object):
         self.countHalf = False
         self.countThreeFourth = False
 
+        self.adviceTimes = 0
+        self.currentAdviceDiagram = None
+
     def loadPuzzle(self, puzzleName):
         puzzleFilePath = "puzzles/" + puzzleName + ".txt"
         puzzleFile = open(puzzleFilePath, "r")
@@ -130,82 +133,90 @@ class Nonogram(object):
 
 
     def draw(self, startTime):
-        # Draw the outer rectangle 
-        outerW = self.cols * self._cellDims
-        outerH = self.rows * self._cellDims
-        outerX = self._width/2 - outerW/2 + (3/2) * self._cellDims
-        outerY = self._height/2 - outerH/2 + (3/2) * self._cellDims
-        pg.draw.rect(self._screen, self._gridColor, pg.Rect(outerX, outerY, outerW, outerH),  2) 
 
-        # Draw the grid
-        for row in range(self.rows):
-            for col in range(self.cols):
-                x = outerX + col * self._cellDims
+        # show the diagram while advice is being given
+        if self.advice.p != None and self.advice.p.is_alive():
+            self._screen.fill(pg.Color("white"))
+            testImg = pg.image.load(self.currentAdviceDiagram)
+            self._screen.blit(testImg, 
+                              (int(self._width/2 - testImg.get_rect().width/2), 
+                               int(self._height/2 - testImg.get_rect().height/2)))
+        # show the game
+        else:
+            # Draw the outer rectangle 
+            outerW = self.cols * self._cellDims
+            outerH = self.rows * self._cellDims
+            outerX = self._width/2 - outerW/2 + (3/2) * self._cellDims
+            outerY = self._height/2 - outerH/2 + (3/2) * self._cellDims
+            pg.draw.rect(self._screen, self._gridColor, pg.Rect(outerX, outerY, outerW, outerH),  2) 
+
+            # Draw the grid
+            for row in range(self.rows):
+                for col in range(self.cols):
+                    x = outerX + col * self._cellDims
+                    y = outerY + row * self._cellDims
+                    pg.draw.rect(self._screen, self._gridColor, pg.Rect(x, y, self._cellDims, self._cellDims),  2) 
+
+            # draw the side wings of the board
+            for row in range(self.rows):
+                x = outerX - 3 * self._cellDims
                 y = outerY + row * self._cellDims
-                pg.draw.rect(self._screen, self._gridColor, pg.Rect(x, y, self._cellDims, self._cellDims),  2) 
+                w = self._cellDims * 3
+                h = self._cellDims
+                pg.draw.rect(self._screen, self._gridColor, pg.Rect(x, y, w, h),  2) 
 
-        # draw the side wings of the board
-        for row in range(self.rows):
-            x = outerX - 3 * self._cellDims
-            y = outerY + row * self._cellDims
-            w = self._cellDims * 3
-            h = self._cellDims
-            pg.draw.rect(self._screen, self._gridColor, pg.Rect(x, y, w, h),  2) 
-
-        # draw the top wings of the board
-        for col in range(self.cols):
-            y = outerY - 3 * self._cellDims
-            x = outerX + col * self._cellDims
-            h = self._cellDims * 3
-            w = self._cellDims
-            pg.draw.rect(self._screen, self._gridColor, pg.Rect(x, y, w, h),  2) 
-
-        # draw the state of each cell
-        for row in range(self.rows):
+            # draw the top wings of the board
             for col in range(self.cols):
+                y = outerY - 3 * self._cellDims
                 x = outerX + col * self._cellDims
-                y = outerY + row * self._cellDims
+                h = self._cellDims * 3
+                w = self._cellDims
+                pg.draw.rect(self._screen, self._gridColor, pg.Rect(x, y, w, h),  2) 
 
-                if self.gameState[row][col] == SELECTED:
-                    pg.draw.rect(self._screen, self._gridColor, pg.Rect(x + 5, y + 5, self._cellDims - 10, self._cellDims - 10)) 
-                elif self.gameState[row][col] == CROSSED:                    
-                    self._screen.blit(self._crossImg, (x + 5,y + 5))
+            # draw the state of each cell
+            for row in range(self.rows):
+                for col in range(self.cols):
+                    x = outerX + col * self._cellDims
+                    y = outerY + row * self._cellDims
 
-        font = pg.font.SysFont('Helvetica', 30)
+                    if self.gameState[row][col] == SELECTED:
+                        pg.draw.rect(self._screen, self._gridColor, pg.Rect(x + 5, y + 5, self._cellDims - 10, self._cellDims - 10)) 
+                    elif self.gameState[row][col] == CROSSED:                    
+                        self._screen.blit(self._crossImg, (x + 5,y + 5))
 
-        # draw the numbers
-        for i in range(len(self.puzzle)):
-            for j in range(len(self.puzzle[0])):
-                # if not zero
-                if self.puzzle[i][j] != 0:
-                    textSurf = font.render(str(self.puzzle[i][j]), False, (0, 0, 0))
-                    textRect = textSurf.get_rect()
-                    # if on top row
-                    if i < len(self.puzzle)/2:
-                        # text surface object
-                        x = outerX + i * self._cellDims + textRect.height/2
-                        y = outerY + j * self._cellDims - self._cellDims*(3) + textRect.width/2
+            font = pg.font.SysFont('Helvetica', 30)
 
-                    # if on side
-                    else:
-                        y = outerY + (i % self.rows) * self._cellDims + textRect.height/2
-                        x = outerX + j * self._cellDims - self._cellDims*(3) + textRect.width/2
-                    
-                    # draw on the screen
-                    self._screen.blit(textSurf, (x, y))
+            # draw the numbers
+            for i in range(len(self.puzzle)):
+                for j in range(len(self.puzzle[0])):
+                    # if not zero
+                    if self.puzzle[i][j] != 0:
+                        textSurf = font.render(str(self.puzzle[i][j]), False, (0, 0, 0))
+                        textRect = textSurf.get_rect()
+                        # if on top row
+                        if i < len(self.puzzle)/2:
+                            # text surface object
+                            x = outerX + i * self._cellDims + textRect.height/2
+                            y = outerY + j * self._cellDims - self._cellDims*(3) + textRect.width/2
 
-        ## draw the timer
-        #  drawing box for timer
-        # pg.draw.rect(self._screen, self._gridColor, pg.Rect(outerX + outerW, outerY + outerH, self._cellDims * 3, self._cellDims * 2),  2) 
-        elapedTotalSeconds = time.time() - startTime
-        elapsedMinutes = elapedTotalSeconds // 60
-        elapsedSeconds = elapedTotalSeconds % 60
-        elapsedTime_string = "Time: {0:02}:{1:02}".format(int(elapsedMinutes), int(elapsedSeconds//1))
-        timeSurf = font.render(elapsedTime_string, False, (0, 0, 0))
-        # timeRect = timeSurf.get_rect()
-        self._screen.blit(timeSurf, (outerX + outerW + self._cellDims * 2, outerY))
+                        # if on side
+                        else:
+                            y = outerY + (i % self.rows) * self._cellDims + textRect.height/2
+                            x = outerX + j * self._cellDims - self._cellDims*(3) + textRect.width/2
+                        
+                        # draw on the screen
+                        self._screen.blit(textSurf, (x, y))
 
-
+            ## draw the timer
+            #  drawing box for timer
+            # pg.draw.rect(self._screen, self._gridColor, pg.Rect(outerX + outerW, outerY + outerH, self._cellDims * 3, self._cellDims * 2),  2) 
+            elapedTotalSeconds = time.time() - startTime - self.adviceTimes
+            elapsedMinutes = elapedTotalSeconds // 60
+            elapsedSeconds = elapedTotalSeconds % 60
+            elapsedTime_string = "Time: {0:02}:{1:02}".format(int(elapsedMinutes), int(elapsedSeconds//1))
+            timeSurf = font.render(elapsedTime_string, False, (0, 0, 0))
+            # timeRect = timeSurf.get_rect()
+            self._screen.blit(timeSurf, (outerX + outerW + self._cellDims * 2, outerY))
 
     def checkWin(self):
         for row in range(self.rows):
@@ -254,6 +265,9 @@ class Nonogram(object):
 
     def update(self, keys):
         if self.adviceNeeded():
-            self.advice.giveAdvice(self)
+            advice, self.currentAdviceDiagram = self.advice.giveAdvice(self)
+            # used to remove time taken by advice
+            self.adviceTimes += advice
+            print(self.adviceTimes)
         if self.checkWin():
             self.gameMode = SOLVED

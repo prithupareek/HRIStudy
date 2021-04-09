@@ -1,6 +1,9 @@
 from mistyPy import Robot
 import random
 from nonogram import EMPTY, SELECTED, CROSSED
+import simpleaudio as sa
+from multiprocessing import Process
+from mutagen.wave import WAVE
 
 # Advice numbers
 NUMBER_EQ_GRIDSIZE = 0
@@ -15,8 +18,16 @@ CONTRADICTION = 8
 LEN_ADVICE = 9
 
 class Advice():
-    def __init__(self, ip):
-        # self.misty = Robot(ip) TODO: uncomment later
+    def __init__(self, ip, condition):
+
+        self.condition = condition
+
+        if self.condition == "robot" or self.condition == "video":
+            self.misty = Robot(ip)
+
+        # used to store the audioplaying process so the the nonogram can display the diagram while running
+        self.p = None;
+
         # Map from advice numbers to audio file names
         self.adviceAudioMap = {
                             NUMBER_EQ_GRIDSIZE: "1.wav",
@@ -28,6 +39,17 @@ class Advice():
                             MERGE_AND_SPLIT: "7.wav",
                             DISTINGUISH_COMPLETE_GROUPS: "8.wav",
                             CONTRADICTION: "9.wav"
+                        }
+        self.adviceDiagramMap = {
+                            NUMBER_EQ_GRIDSIZE: "test_image.png",
+                            OVERLAPPING: "test_image.png",
+                            NUM_SEP_BY_1: "test_image.png",
+                            UNREACHABLE: "test_image.png",
+                            STILL_SPACE: "test_image.png",
+                            MAKE_COMPLETE: "test_image.png",
+                            MERGE_AND_SPLIT: "test_image.png",
+                            DISTINGUISH_COMPLETE_GROUPS: "test_image.png",
+                            CONTRADICTION: "test_image.png"
                         }
         self.usedAdvice = {
                             NUMBER_EQ_GRIDSIZE: False,
@@ -51,13 +73,32 @@ class Advice():
                             DISTINGUISH_COMPLETE_GROUPS: self.check_distinguish_groups,
                             CONTRADICTION: self.check_contradiction
                         }
+
+    def playAudio(self, wavefile):
+        wave_obj = sa.WaveObject.from_wave_file(wavefile)
+        play_obj = wave_obj.play()
+        play_obj.wait_done()
         
 
     def giveAdvice(self, nonogram):
         bestAdvice = self.getBestAdvice(nonogram)
         print(bestAdvice)
         self.usedAdvice[bestAdvice] = True
-        # TODO: Look at board and back - Maybe threading?
+
+        # get the filenames
+        filename = "audio/" + self.adviceAudioMap[bestAdvice]
+        diagramFilename = "assets/" + self.adviceDiagramMap[bestAdvice]
+
+        # if in the video, robot, or debug conditions
+        if self.condition == "video" or self.condition == "debug" or self.condition == "robot":
+            # create a new process to play the audio
+            self.p = Process(target=self.playAudio, args=(filename,))
+            self.p.start()
+
+        # return the length of the file and diagram image
+        return WAVE(filename).info.length, diagramFilename
+            
+
         # self.misty.playAudio(self.adviceAudioMap[bestAdvice]) TODO: uncomment later
     
     # Decide randomly from applicable/unused advice
@@ -127,7 +168,7 @@ class Advice():
         for i in range(len(nonogram.puzzle)):
             if sum(nonogram.puzzle[i]) + len([a for a in nonogram.puzzle[i] if a != 0]) - 1 == nonogram.rows:
                 if i < nonogram.cols:
-                    if EMPTY in [nonogram.gameState[r][i] for r in range(nonogram.row)]:
+                    if EMPTY in [nonogram.gameState[r][i] for r in range(nonogram.rows)]:
                         return True
                 else:
                     row = i - nonogram.cols
@@ -238,7 +279,7 @@ class Advice():
     def check_merge_split(self, nonogram):
         # TODO: Test
         # Randomly generate heuristic - only when more than 1/3 placed
-        if random.randint(0, 99) > 90 and nonogram.getPlacedCount() >= int(self.rows*self.cols/3):
+        if random.randint(0, 99) > 90 and nonogram.getPlacedCount() >= int(nonogram.rows*nonogram.cols/3):
             return True
         return False
     
