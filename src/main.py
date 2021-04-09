@@ -42,7 +42,7 @@ class Game(object):
         self.puzzleIndex = 0
 
         # Create Misty object
-        self.advice = Advice("192.168.2.216")
+        self.advice = Advice("192.168.2.216", condition)
 
         self._nonogram = Nonogram(self._screen, self.puzzles[self.puzzleIndex], self.advice)
         self._startTime = time.time()
@@ -87,7 +87,7 @@ class Game(object):
     def drawBreak(self, startTime):
         self._screen.fill(pg.Color("orange"))
         font = pg.font.SysFont('Helvetica', 30)
-        elapedTotalSeconds = time.time() - startTime
+        elapedTotalSeconds = time.time() - startTime - self._nonogram.adviceTimes
         elapsedMinutes = elapedTotalSeconds // 60
         elapsedSeconds = elapedTotalSeconds % 60
         elapsedTime_string = "Break Time: {0:02}:{1:02}".format(int(elapsedMinutes), int(elapsedSeconds//1))
@@ -125,7 +125,7 @@ class Game(object):
                     self._running = ENDSCREEN
                 else:
                     self._running = BREAK
-                    self._nonogram = Nonogram(self._screen, self.puzzles[self.puzzleIndex])
+                    self._nonogram = Nonogram(self._screen, self.puzzles[self.puzzleIndex], self.advice)
                     self._startTime = time.time()
             elif self._running == BREAK:
                 self._running = PLAYING
