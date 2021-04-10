@@ -192,7 +192,6 @@ def main():
 
     pID, condition = readArgs()
 
-    # TODO Comment back in before final commit
     game = Game(pID, condition)
     game.mainLoop()
      

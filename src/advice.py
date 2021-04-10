@@ -4,6 +4,7 @@ from nonogram import EMPTY, SELECTED, CROSSED
 import simpleaudio as sa
 from multiprocessing import Process
 from mutagen.wave import WAVE
+import time
 
 # Advice numbers
 NUMBER_EQ_GRIDSIZE = 0
@@ -26,7 +27,7 @@ class Advice():
             self.misty = Robot(ip)
 
         # used to store the audioplaying process so the the nonogram can display the diagram while running
-        self.p = None;
+        self.p = None
 
         # Map from advice numbers to audio file names
         self.adviceAudioMap = {
@@ -41,15 +42,15 @@ class Advice():
                             CONTRADICTION: "9.wav"
                         }
         self.adviceDiagramMap = {
-                            NUMBER_EQ_GRIDSIZE: "test_image.png",
-                            OVERLAPPING: "test_image.png",
-                            NUM_SEP_BY_1: "test_image.png",
-                            UNREACHABLE: "test_image.png",
-                            STILL_SPACE: "test_image.png",
-                            MAKE_COMPLETE: "test_image.png",
-                            MERGE_AND_SPLIT: "test_image.png",
-                            DISTINGUISH_COMPLETE_GROUPS: "test_image.png",
-                            CONTRADICTION: "test_image.png"
+                            NUMBER_EQ_GRIDSIZE: "Study_Advice_Diagrams/Slide1.png",
+                            OVERLAPPING: "Study_Advice_Diagrams/Slide2.png",
+                            NUM_SEP_BY_1: "Study_Advice_Diagrams/Slide3.png",
+                            UNREACHABLE: "Study_Advice_Diagrams/Slide4.png",
+                            STILL_SPACE: "Study_Advice_Diagrams/Slide5.png",
+                            MAKE_COMPLETE: "Study_Advice_Diagrams/Slide6.png",
+                            MERGE_AND_SPLIT: "Study_Advice_Diagrams/Slide7.png",
+                            DISTINGUISH_COMPLETE_GROUPS: "Study_Advice_Diagrams/Slide8.png",
+                            CONTRADICTION: "Study_Advice_Diagrams/Slide9.png"
                         }
         self.usedAdvice = {
                             NUMBER_EQ_GRIDSIZE: False,
@@ -78,8 +79,14 @@ class Advice():
         wave_obj = sa.WaveObject.from_wave_file(wavefile)
         play_obj = wave_obj.play()
         play_obj.wait_done()
-        
 
+    def noAudioDelay(self, wavefile):
+        # delay for 15 seconds
+        time.sleep(WAVE(wavefile).info.length);
+
+    def playMistyAudio(self, wavefile):
+        pass
+        
     def giveAdvice(self, nonogram):
         bestAdvice = self.getBestAdvice(nonogram)
         print(bestAdvice)
@@ -88,15 +95,23 @@ class Advice():
         # get the filenames
         filename = "audio/" + self.adviceAudioMap[bestAdvice]
         diagramFilename = "assets/" + self.adviceDiagramMap[bestAdvice]
+        duration = WAVE(filename).info.length
 
         # if in the video, robot, or debug conditions
-        if self.condition == "video" or self.condition == "debug" or self.condition == "robot":
-            # create a new process to play the audio
-            self.p = Process(target=self.playAudio, args=(filename,))
-            self.p.start()
+        if self.condition == "video" or self.condition == "debug":
+            function = self.playAudio            
+        elif self.condition == "norobot":
+            # create a new delay and show the diagram
+            function = self.noAudioDelay
+        elif self.condition == "robot":
+            function = self.playMistyAudio
 
-        # return the length of the file and diagram image
-        return WAVE(filename).info.length, diagramFilename
+        self.p = Process(target=function, args=(filename,))
+        self.p.start()
+
+        return duration, diagramFilename
+
+        
             
 
         # self.misty.playAudio(self.adviceAudioMap[bestAdvice]) TODO: uncomment later
