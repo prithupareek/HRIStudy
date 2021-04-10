@@ -125,7 +125,7 @@ class Nonogram(object):
         row, col = self.getCellFromPos(pos)
 
         # if clicked in grid
-        if (row, col) != (-1, -1):
+        if (row, col) != (-1, -1) and (self.advice.p == None or not self.advice.p.is_alive()):
             # modify the game state appropriately
             self.gameState[row][col] = (self.gameState[row][col] + 1) % 3
             self.lastClickTime = time.time()
@@ -137,10 +137,11 @@ class Nonogram(object):
         # show the diagram while advice is being given
         if self.advice.p != None and self.advice.p.is_alive():
             self._screen.fill(pg.Color("white"))
-            testImg = pg.image.load(self.currentAdviceDiagram)
-            self._screen.blit(testImg, 
-                              (int(self._width/2 - testImg.get_rect().width/2), 
-                               int(self._height/2 - testImg.get_rect().height/2)))
+            diagram = pg.image.load(self.currentAdviceDiagram)
+            diagram = pg.transform.scale(diagram, (int(2*self._width/3), int(2*self._height/3)))
+            self._screen.blit(diagram, 
+                              (int(self._width/2 - diagram.get_rect().width/2), 
+                               int(self._height/2 - diagram.get_rect().height/2)))
         # show the game
         else:
             # Draw the outer rectangle 
