@@ -42,7 +42,7 @@ class Game(object):
         self.puzzleIndex = 0
 
         # Create Misty object
-        self.advice = Advice("100.64.1.192", condition)
+        self.advice = Advice("172.20.10.8", condition)
 
         self._nonogram = Nonogram(self._screen, self.puzzles[self.puzzleIndex], self.advice)
         self._startTime = time.time()
