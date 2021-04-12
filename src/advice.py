@@ -23,9 +23,6 @@ class Advice():
 
         self.condition = condition
 
-        if self.condition == "robot" or self.condition == "video":
-            self.misty = Robot(ip)
-
         # used to store the audioplaying process so the the nonogram can display the diagram while running
         self.p = None
 
@@ -74,6 +71,12 @@ class Advice():
                             DISTINGUISH_COMPLETE_GROUPS: self.check_distinguish_groups,
                             CONTRADICTION: self.check_contradiction
                         }
+                        
+        if self.condition == "robot" or self.condition == "video":
+            self.misty = Robot(ip)
+
+            # for audio in self.adviceAudioMap:
+            #     self.misty.uploadAudio("audio/" + self.adviceAudioMap[audio])
 
     def playAudio(self, wavefile):
         wave_obj = sa.WaveObject.from_wave_file(wavefile)
@@ -85,9 +88,8 @@ class Advice():
         time.sleep(WAVE(wavefile).info.length)
 
     def playMistyAudio(self, wavefile):
-        # TODO: upload before
-        self.misty.uploadAudio(wavefile)
         self.misty.playAudio(wavefile)
+        time.sleep(WAVE(wavefile).info.length + 2)
         
     def giveAdvice(self, nonogram):
         bestAdvice = self.getBestAdvice(nonogram)
