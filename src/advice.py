@@ -82,10 +82,12 @@ class Advice():
 
     def noAudioDelay(self, wavefile):
         # delay for 15 seconds
-        time.sleep(WAVE(wavefile).info.length);
+        time.sleep(WAVE(wavefile).info.length)
 
     def playMistyAudio(self, wavefile):
-        pass
+        # TODO: upload before
+        self.misty.uploadAudio(wavefile)
+        self.misty.playAudio(wavefile)
         
     def giveAdvice(self, nonogram):
         bestAdvice = self.getBestAdvice(nonogram)
@@ -111,10 +113,7 @@ class Advice():
 
         return duration, diagramFilename
 
-        
-            
 
-        # self.misty.playAudio(self.adviceAudioMap[bestAdvice]) TODO: uncomment later
     
     # Decide randomly from applicable/unused advice
     def getBestAdvice(self, nonogram):
