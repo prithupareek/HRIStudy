@@ -99,7 +99,7 @@ class Game(object):
         finished = False
 
         # calculate elapsed time
-        elapedTotalSeconds = time.time() - self._startTime
+        elapedTotalSeconds = time.time() - self._startTime - self._nonogram.adviceTimes
         elapsedMinutes = elapedTotalSeconds // 60
         elapsedSeconds = elapedTotalSeconds % 60
 

@@ -71,10 +71,20 @@ class Advice():
                             DISTINGUISH_COMPLETE_GROUPS: self.check_distinguish_groups,
                             CONTRADICTION: self.check_contradiction
                         }
-                        
+
         if self.condition == "robot" or self.condition == "video":
             self.misty = Robot(ip)
+            self.misty.changeImage('e_DefaultContent.jpg')
 
+
+            # self.misty.uploadAudio("audio/introduction.wav")
+
+
+            p = Process(target=self.playMistyAudio, args=("audio/introduction.wav",))
+            p.start()
+
+            # self.misty.moveHeadPosition(0, 3, -3, 100)
+            # self.misty.changeLED(0, 255, 0)
             # for audio in self.adviceAudioMap:
             #     self.misty.uploadAudio("audio/" + self.adviceAudioMap[audio])
 
@@ -85,11 +95,16 @@ class Advice():
 
     def noAudioDelay(self, wavefile):
         # delay for 15 seconds
-        time.sleep(WAVE(wavefile).info.length)
+        time.sleep(WAVE(wavefile).info.length*2/3)
 
     def playMistyAudio(self, wavefile):
+        self.misty.moveHeadPosition(0, 0, 0, 100) # center the head
+        self.misty.changeLED(255, 0, 0)
         self.misty.playAudio(wavefile)
+        # self.misty.changeImage()
         time.sleep(WAVE(wavefile).info.length + 2)
+        self.misty.moveHeadPosition(0, 3, -3, 100)
+        self.misty.changeLED(0, 255, 0)
         
     def giveAdvice(self, nonogram):
         bestAdvice = self.getBestAdvice(nonogram)
@@ -99,7 +114,11 @@ class Advice():
         # get the filenames
         filename = "audio/" + self.adviceAudioMap[bestAdvice]
         diagramFilename = "assets/" + self.adviceDiagramMap[bestAdvice]
+
         duration = WAVE(filename).info.length
+
+        if self.condition == "norobot":
+            duration = duration * (2/3)
 
         # if in the video, robot, or debug conditions
         if self.condition == "video" or self.condition == "debug":
@@ -109,6 +128,7 @@ class Advice():
             function = self.noAudioDelay
         elif self.condition == "robot":
             function = self.playMistyAudio
+
 
         self.p = Process(target=function, args=(filename,))
         self.p.start()
