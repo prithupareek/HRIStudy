@@ -142,6 +142,7 @@ class Nonogram(object):
             self._screen.blit(diagram, 
                               (int(self._width/2 - diagram.get_rect().width/2), 
                                int(self._height/2 - diagram.get_rect().height/2)))
+            self.lastClickTime = time.time()
         # show the game
         else:
             # Draw the outer rectangle 
