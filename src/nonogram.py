@@ -125,7 +125,7 @@ class Nonogram(object):
         row, col = self.getCellFromPos(pos)
 
         # if clicked in grid
-        if (row, col) != (-1, -1) and (self.advice.p == None or not self.advice.p.is_alive()):
+        if (row, col) != (-1, -1) and (self.advice == None or (self.advice.p == None or not self.advice.p.is_alive())):
             # modify the game state appropriately
             self.gameState[row][col] = (self.gameState[row][col] + 1) % 3
             self.lastClickTime = time.time()
@@ -135,7 +135,7 @@ class Nonogram(object):
     def draw(self, startTime):
 
         # show the diagram while advice is being given
-        if self.advice.p != None and self.advice.p.is_alive():
+        if self.advice != None and self.advice.p != None and self.advice.p.is_alive():
             self._screen.fill(pg.Color("white"))
             diagram = pg.image.load(self.currentAdviceDiagram)
             diagram = pg.transform.scale(diagram, (int(2*self._width/3), int(2*self._height/3)))
@@ -208,17 +208,17 @@ class Nonogram(object):
                         
                         # draw on the screen
                         self._screen.blit(textSurf, (x, y))
-
-            ## draw the timer
-            #  drawing box for timer
-            # pg.draw.rect(self._screen, self._gridColor, pg.Rect(outerX + outerW, outerY + outerH, self._cellDims * 3, self._cellDims * 2),  2) 
-            elapedTotalSeconds = time.time() - startTime - self.adviceTimes
-            elapsedMinutes = elapedTotalSeconds // 60
-            elapsedSeconds = elapedTotalSeconds % 60
-            elapsedTime_string = "Time: {0:02}:{1:02}".format(int(elapsedMinutes), int(elapsedSeconds//1))
-            timeSurf = font.render(elapsedTime_string, False, (0, 0, 0))
-            # timeRect = timeSurf.get_rect()
-            self._screen.blit(timeSurf, (outerX + outerW + self._cellDims * 2, outerY))
+            if self.advice != None:
+                ## draw the timer
+                #  drawing box for timer
+                # pg.draw.rect(self._screen, self._gridColor, pg.Rect(outerX + outerW, outerY + outerH, self._cellDims * 3, self._cellDims * 2),  2) 
+                elapedTotalSeconds = time.time() - startTime - self.adviceTimes
+                elapsedMinutes = elapedTotalSeconds // 60
+                elapsedSeconds = elapedTotalSeconds % 60
+                elapsedTime_string = "Time: {0:02}:{1:02}".format(int(elapsedMinutes), int(elapsedSeconds//1))
+                timeSurf = font.render(elapsedTime_string, False, (0, 0, 0))
+                # timeRect = timeSurf.get_rect()
+                self._screen.blit(timeSurf, (outerX + outerW + self._cellDims * 2, outerY))
 
     def checkWin(self):
         for row in range(self.rows):
@@ -266,7 +266,7 @@ class Nonogram(object):
         return False
 
     def update(self, keys):
-        if self.adviceNeeded():
+        if self.advice != None and self.adviceNeeded():
             advice, self.currentAdviceDiagram = self.advice.giveAdvice(self)
             # used to remove time taken by advice
             self.adviceTimes += advice

@@ -23,7 +23,7 @@ MAXTIME = 15    # minutes
 BREAKTIME = 3   # minutes
 
 class Game(object):
-    def __init__(self, pID, condition) -> None:
+    def __init__(self) -> None:
         # initialize the pygame module
         pg.init()
         pg.display.set_caption("HRI Study")
@@ -38,18 +38,12 @@ class Game(object):
         self._keys = pg.key.get_pressed()
     
         # Multiple puzzles
-        self.puzzles = ["puzzle1", "puzzle2", "puzzle1Flipped"]
+        self.puzzles = ["advicePuzzle"]
         self.puzzleIndex = 0
-
-        # Create Misty object
-        self.advice = Advice("192.168.8.168", condition)
+        self.advice = None
 
         self._nonogram = Nonogram(self._screen, self.puzzles[self.puzzleIndex], self.advice)
         self._startTime = time.time()
-
-        self._participantID = pID
-        self._condition = condition
-
         self._solvetimes = []
 
     def eventLoop(self):
@@ -64,37 +58,9 @@ class Game(object):
                     self._running = PLAYING
 
     def draw(self, startTime):
-        if self._running == INTRO:
-            self.drawIntro()
-        elif self._running == ENDSCREEN:
-            self.drawEndscreen()
-        elif self._running == BREAK:
-            self.drawBreak(startTime)
-        else:
             self._screen.fill(pg.Color("white"))
             self._nonogram.draw(startTime)
-
-    def drawIntro(self):
-        self._screen.fill(pg.Color("blue"))
-        font = pg.font.SysFont('Helvetica', 30)
-        textSurf = font.render("Click to Continue", False, (0, 0, 0))
-        info = pg.display.Info()
-        self._screen.blit(textSurf, (info.current_w/2, info.current_h/2))
     
-    def drawEndscreen(self):
-        self._screen.fill(pg.Color("red"))
-
-    def drawBreak(self, startTime):
-        self._screen.fill(pg.Color("orange"))
-        font = pg.font.SysFont('Helvetica', 30)
-        elapedTotalSeconds = time.time() - startTime - self._nonogram.adviceTimes
-        elapsedMinutes = elapedTotalSeconds // 60
-        elapsedSeconds = elapedTotalSeconds % 60
-        elapsedTime_string = "Break Time: {0:02}:{1:02}".format(int(elapsedMinutes), int(elapsedSeconds//1))
-        timeSurf = font.render(elapsedTime_string, False, (0, 0, 0))
-        # timeRect = timeSurf.get_rect()
-        self._screen.blit(timeSurf, (200, 200))
-
     def update(self):
         finished = False
 
@@ -136,7 +102,7 @@ class Game(object):
         first = True
         while self._running != END:
             self.eventLoop()
-            if self._running == PLAYING or self._running == BREAK:
+            if self._running == PLAYING:
                 # set time to begin at the start of puzzle
                 if first:
                     self._startTime = time.time()
@@ -145,54 +111,9 @@ class Game(object):
             self.draw(self._startTime)
             pg.display.update()
 
-        # do the csv stuff here
-        self.saveData()
-    
-    def saveData(self):
-        # open the data csv
-        print(self._solvetimes)
-
-        fields=[self._participantID, self._condition]
-
-        # add all the solvetimes
-        for time in self._solvetimes:
-            fields.append(time)
-
-        with open('data.csv', 'a+') as f:
-            writer = csv.writer(f)
-            writer.writerow(fields)
-        
-def readArgs():
-    pID = None
-    condition = None
-
-    argv = sys.argv[1:]
-
-    try:
-        opts, args = getopt.getopt(argv, "p:c:")
-      
-    except:
-        print("Error: Must specify participant ID and puzzle condition")
-        sys.exit()
-  
-    for opt, arg in opts:
-        if opt in ['-p']:
-            pID = arg
-        elif opt in ['-c']:
-            condition = arg
-
-    if len(argv) < 2 or pID == None or condition == None:
-        print("Error: Must specify participant ID and puzzle condition")
-        sys.exit()
-
-    return pID, condition
-
 # define a main function
 def main():
-
-    pID, condition = readArgs()
-
-    game = Game(pID, condition)
+    game = Game()
     game.mainLoop()
      
 # run the main function only if this module is executed as the main script
