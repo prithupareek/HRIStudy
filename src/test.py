@@ -1,7 +1,7 @@
 from mistyPy import Robot
 import time
 
-misty = Robot("172.20.10.8")
+misty = Robot("192.168.8.168")
 misty.changeLED(0, 255, 255)
 misty.moveHeadPosition(0, 0, 0, 100) # center the head
 # misty.moveArmsDegrees(0, 0, 100, 100)
