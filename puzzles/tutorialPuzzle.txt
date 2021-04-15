@@ -1,0 +1,18 @@
+# tutorialPuzzle
+# 0 implies no number in that position, three positions per rectangle
+
+# Top Row (Left -> Right, Top -> Bottom)
+(0,0,7), (0,3,1), (0,1,5), (0,1,4), (3,1,1), (0,3,8), (0,0,8), (0,3,2)
+
+# Left Column (Top -> Bottom, Left -> Right)
+(0,0,6), (0,2,4), (0,2,4), (1,2,2), (0,0,7), (1,2,3), (0,1,6), (1,1,1)
+
+# Solution Game State
+| 1 1 1 1 1 2 2 2
+| 1 1 1 2 1 2 2 1
+| 2 1 1 2 2 1 2 1
+| 2 1 1 2 1 1 2 2
+| 1 2 1 1 1 2 2 2
+| 1 1 2 2 1 1 1 1
+| 1 2 2 2 1 2 1 2
+| 2 1 1 1 1 1 2 2

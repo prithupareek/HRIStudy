@@ -92,6 +92,7 @@ class Advice():
 
             for audio in self.adviceAudioMap:
                 if "audio/" + self.adviceAudioMap[audio] not in self.misty.getAudioList():
+                    print("Uploading" + "audio/" + self.adviceAudioMap[audio])
                     self.misty.uploadAudio("audio/" + self.adviceAudioMap[audio])
 
     def playAudio(self, wavefile):

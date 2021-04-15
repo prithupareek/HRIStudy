@@ -22,6 +22,9 @@ BREAK = 4
 MAXTIME = 15    # minutes
 BREAKTIME = 3   # minutes
 
+OOCIP = "100.64.1.192"
+MISTYNETIP = "192.168.8.168"
+
 class Game(object):
     def __init__(self, pID, condition) -> None:
         # initialize the pygame module
@@ -42,7 +45,7 @@ class Game(object):
         self.puzzleIndex = 0
 
         # Create Misty object
-        self.advice = Advice("192.168.8.168", condition)
+        self.advice = Advice(OOCIP, condition)
 
         self._nonogram = Nonogram(self._screen, self.puzzles[self.puzzleIndex], self.advice)
         self._startTime = time.time()

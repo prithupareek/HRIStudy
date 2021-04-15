@@ -44,6 +44,8 @@ class Nonogram(object):
         self.adviceTimes = 0
         self.currentAdviceDiagram = None
 
+        self.counter = None # advice delay
+
     def loadPuzzle(self, puzzleName):
         puzzleFilePath = "puzzles/" + puzzleName + ".txt"
         puzzleFile = open(puzzleFilePath, "r")
@@ -266,10 +268,15 @@ class Nonogram(object):
         return False
 
     def update(self, keys):
-        if self.advice != None and self.adviceNeeded():
-            advice, self.currentAdviceDiagram = self.advice.giveAdvice(self)
-            # used to remove time taken by advice
-            self.adviceTimes += advice
-            print(self.adviceTimes)
+        if self.counter is not None:
+            self.counter += 1
+            if self.counter > 50:
+                advice, self.currentAdviceDiagram = self.advice.giveAdvice(self)
+                # used to remove time taken by advice
+                self.adviceTimes += advice
+                print(self.adviceTimes)
+                self.counter = None
+        elif self.advice != None and self.adviceNeeded():
+            self.counter = 0
         if self.checkWin():
             self.gameMode = SOLVED

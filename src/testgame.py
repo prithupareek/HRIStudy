@@ -38,7 +38,7 @@ class Game(object):
         self._keys = pg.key.get_pressed()
     
         # Multiple puzzles
-        self.puzzles = ["advicePuzzle"]
+        self.puzzles = ["tutorialPuzzle"]
         self.puzzleIndex = 0
         self.advice = None
 
