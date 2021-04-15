@@ -76,22 +76,38 @@ class Advice():
             self.misty = Robot(ip)
             self.misty.changeImage('e_DefaultContent.jpg')
 
+            if "audio/introduction.wav" not in self.misty.getAudioList():
+                self.misty.uploadAudio("audio/introduction.wav")
 
-            # self.misty.uploadAudio("audio/introduction.wav")
+            if self.condition == "robot":
+                function = self.playMistyAudio
+            elif self.condition == "video":
+                function = self.playVideoAudio
 
-
-            p = Process(target=self.playMistyAudio, args=("audio/introduction.wav",))
+            p = Process(target=function, args=("audio/introduction.wav",))
             p.start()
 
-            # self.misty.moveHeadPosition(0, 3, -3, 100)
-            # self.misty.changeLED(0, 255, 0)
-            # for audio in self.adviceAudioMap:
-            #     self.misty.uploadAudio("audio/" + self.adviceAudioMap[audio])
+            self.misty.moveHeadPosition(0, 3, -3, 100)
+            self.misty.changeLED(0, 255, 0)
+
+            for audio in self.adviceAudioMap:
+                if "audio/" + self.adviceAudioMap[audio] not in self.misty.getAudioList():
+                    self.misty.uploadAudio("audio/" + self.adviceAudioMap[audio])
 
     def playAudio(self, wavefile):
         wave_obj = sa.WaveObject.from_wave_file(wavefile)
         play_obj = wave_obj.play()
         play_obj.wait_done()
+
+    def playVideoAudio(self, wavefile):
+        self.misty.moveHeadPosition(0, 0, 0, 100) # center the head
+        self.misty.changeLED(255, 0, 0)
+        wave_obj = sa.WaveObject.from_wave_file(wavefile)
+        play_obj = wave_obj.play()
+        play_obj.wait_done()
+        # self.misty.changeImage()
+        self.misty.moveHeadPosition(0, 3, -3, 100)
+        self.misty.changeLED(0, 255, 0)
 
     def noAudioDelay(self, wavefile):
         # delay for 15 seconds
@@ -122,7 +138,7 @@ class Advice():
 
         # if in the video, robot, or debug conditions
         if self.condition == "video" or self.condition == "debug":
-            function = self.playAudio            
+            function = self.playVideoAudio            
         elif self.condition == "norobot":
             # create a new delay and show the diagram
             function = self.noAudioDelay
