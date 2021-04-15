@@ -7,3 +7,5 @@ participant_id,condition,time_1,time_2,time_3
 0,robot
 0,video,123.0,50.0,157.0
 1,video,900.0,477.0,373.0
+2,norobot
+2,norobot,462.0,237.0,190.0
