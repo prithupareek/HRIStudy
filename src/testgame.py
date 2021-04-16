@@ -19,7 +19,7 @@ PLAYING = 1
 ENDSCREEN = 2
 END = 3
 BREAK = 4
-MAXTIME = 15    # minutes
+MAXTIME = 300    # minutes
 BREAKTIME = 3   # minutes
 
 class Game(object):
