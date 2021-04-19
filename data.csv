@@ -4,4 +4,6 @@ participant_id,condition,time_1,time_2,time_3
 2,norobot,462.0,237.0,190.0
 3,robot,311.0,318.0,125.0
 4,norobot,757.0,458.0,900.0
-5,norobot,209.0,186.0,100.0
+5,norobot,209.0,186.0,100.0
+6,robot,900.0,572.0,343.0
+7,video,234.0,188.0,239.0
