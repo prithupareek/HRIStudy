@@ -11,3 +11,4 @@ participant_id,condition,time_1,time_2,time_3
 9,robot,254.0,167.0,169.0
 10,robot,462.0,303.0,261.0
 11,video,194.0,204.0,900.0
+12,norobot,900.0,714.0,273.0
