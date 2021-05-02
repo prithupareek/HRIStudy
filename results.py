@@ -72,7 +72,43 @@ def anova(index, norobot_data, video_data, robot_data):
 
 
 
+def ttest(index, norobot_data, video_data, robot_data):
+    norobot_mean = norobot_data.mean(axis = 0)[index]
+    video_mean = video_data.mean(axis = 0)[index]
+    robot_mean = robot_data.mean(axis = 0)[index]
+
+    norobot_std = norobot_data.std(axis = 0)[index]
+    video_std = video_data.std(axis = 0)[index]
+    robot_std = robot_data.std(axis = 0)[index]
+
+    mean_0 = 0          # mean under the null - no improvement
     
+    norobot_t = norobot_mean/(norobot_std / (15)**0.5)
+    video_t = video_mean/(video_std / (15)**0.5)
+    robot_t = robot_mean/(robot_std / (15)**0.5)
+
+    
+
+    norobot_pval = 1 - scipy.stats.t.cdf(norobot_t, 14)
+    video_pval = 1 - scipy.stats.t.cdf(video_t, 14)
+    robot_pval = 1 - scipy.stats.t.cdf(robot_t, 14)
+
+    print("Index", index)
+    print("Mean - no robot", norobot_mean)
+    print("T value - no robot", norobot_t)
+    print("P-value - no robot", norobot_pval)
+
+    print("Mean - video", video_mean)
+    print("T value - video", video_t)
+    print("P-value - video", video_pval)
+
+    print("Mean - robot", robot_mean)
+    print("T value - robot", robot_t)
+    print("P-value - robot", robot_pval)
+
+    print("\n")
+
+
 
 
 
@@ -111,7 +147,7 @@ def main(args):
     norobot_data = []
     video_data = []
     robot_data = []
-    print(data)
+    # print(data)
 
     for trial in data:
         if trial[0] == 1:
@@ -127,8 +163,11 @@ def main(args):
 
     
 
+    # for i in [5, 6, 7]:
+    #     anova(i, norobot_data, video_data, robot_data)
+
     for i in [5, 6, 7]:
-        anova(i, norobot_data, video_data, robot_data)
+        ttest(i, norobot_data, video_data, robot_data)
 
 
 if __name__ == "__main__":
@@ -141,6 +180,10 @@ if __name__ == "__main__":
 
 H_0 : mean_norobot = mean_video = mean_robot
 H_a : not mean_norobot = mean_video = mean_robot
+
+alpha = 0.05
+qf(0.95, 2, 12) = 3.885294
+Rejection Region: {F > 3.885294}
 
 ANOVA Table RESULTS
     time_1:
@@ -192,4 +235,46 @@ ANOVA Table RESULTS
         Error           12      1670977.6   139248.1
         Total           14      1690044.4
         p-value         0.9341897168496459
+'''
+
+'''
+H_0: mean improvement = 0
+H_a: mean improvement > 0
+
+
+
+Improvement between time_1 and time_2
+Mean - no robot 262.2
+T value - no robot 5.581827247691283
+P-value - no robot 3.380587255563672e-05
+Mean - video 63.8
+T value - video 0.9839638259926194
+P-value - video 0.17091676826650537
+Mean - robot 146.6
+T value - robot 5.158170177143269
+P-value - robot 7.265008933243777e-05
+
+
+Improvement between time_2 and time_3
+Mean - no robot -89.2
+T value - no robot -0.9274569021697335
+P-value - no robot 0.815298302242971
+Mean - video 23.4
+T value - video 0.2024783964679772
+P-value - video 0.4212278577733659
+Mean - robot -2.4
+T value - robot -0.036968008327296194
+P-value - robot 0.5144837641036524
+
+
+Improvement from time_1 to time_3
+Mean - no robot 173.0
+T value - no robot 2.5331918015827544
+P-value - no robot 0.011941444190466166
+Mean - video 87.2
+T value - video 0.779810428227249
+P-value - video 0.22424287864651182
+Mean - robot 144.2
+T value - robot 2.0169198592088846
+P-value - robot 0.03165118966953784
 '''
