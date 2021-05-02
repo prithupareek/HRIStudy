@@ -102,11 +102,16 @@ def main(args):
         
         x.append(statistics.mean(values))
 
+        x.append(values[0] - values[1])
+        x.append(values[1] - values[2])
+        x.append(values[0] - values[2])
+
         data.append(x)
 
     norobot_data = []
     video_data = []
     robot_data = []
+    print(data)
 
     for trial in data:
         if trial[0] == 1:
@@ -122,7 +127,7 @@ def main(args):
 
     
 
-    for i in [1, 2, 3, 4]:
+    for i in [5, 6, 7]:
         anova(i, norobot_data, video_data, robot_data)
 
 
@@ -166,4 +171,25 @@ ANOVA Table RESULTS
         Error           12      463136.6    38594.7
         Total           14      500150.6
         p-value         0.6304490558407776
+    
+    Improvement from time_1 to time_2
+        Source          dof     SS          MS          F
+        Treatments      2       99302.9     49651.5     1.1005396     
+        Error           12      541386.8    45115.6
+        Total           14      640689.7
+        p-value         0.36404861871620386
+
+    Improvement from time_2 to time_3
+        Source          dof     SS          MS          F
+        Treatments      2       34797.7     17398.9     0.1037937     
+        Error           12      2011551.2   167629.2
+        Total           14      2046348.9
+        p-value         0.9022116073486796
+
+    Improvement from time_1 to time_3
+        Source          dof     SS          MS          F
+        Treatments      2       19066.8     9533.4     0.068463    
+        Error           12      1670977.6   139248.1
+        Total           14      1690044.4
+        p-value         0.9341897168496459
 '''
